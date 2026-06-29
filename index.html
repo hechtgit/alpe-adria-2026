@@ -17,8 +17,6 @@ body.fs-l{--fs:1.4} body.fs-xl{--fs:1.75}
 body{margin:0;background:var(--bg);color:var(--ink);font-size:calc(16px*var(--fs));line-height:1.45;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding-bottom:calc(86px + env(safe-area-inset-bottom))}
 .offbar{background:#9a3412;color:#fff;text-align:center;font-size:13px;font-weight:600;padding:6px 10px;display:none}
 .offbar.show{display:block}
-.fab{position:fixed;right:14px;bottom:calc(90px + env(safe-area-inset-bottom));width:62px;height:62px;border-radius:50%;background:#dc2626;color:#fff;border:0;font-weight:800;font-size:16px;letter-spacing:.5px;box-shadow:0 3px 14px rgba(0,0,0,.4);z-index:7;cursor:pointer;display:none;align-items:center;justify-content:center}
-.fab.show{display:flex}
 header{position:sticky;top:0;background:var(--teal);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;z-index:5}
 header b{font-weight:600;font-size:15px}
 header .sub{font-size:12px;opacity:.85}
@@ -79,7 +77,6 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 </header>
 <div class="offbar" id="offbar">📵 Offline — dáta sú uložené, niektoré odkazy nemusia fungovať</div>
 <div class="wrap" id="view"></div>
-<button class="fab" id="sosFab" aria-label="SOS — núdza">SOS</button>
 <div class="toast" id="toast"></div>
 
 <nav>
@@ -89,7 +86,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=23"></script>
+<script src="data.js?v=24"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -495,7 +492,6 @@ function render(){
   else if(tab==='plan')plan();
   else sos();
   if(tab==='plan')document.querySelectorAll('#ds2 button').forEach((b,i)=>b.onclick=()=>selDay(i));
-  const fab=document.getElementById('sosFab');if(fab)fab.classList.toggle('show',tab!=='sos');
 }
 function goTab(t){
   tab=t;
@@ -503,7 +499,6 @@ function goTab(t){
   render();window.scrollTo(0,0);
 }
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>goTab(b.dataset.t));
-{const fab=document.getElementById('sosFab');if(fab)fab.addEventListener('click',()=>goTab('sos'));}
 applyTheme();applyFontSize();updateOffbar();
 if(!window.TRIP){
   V.innerHTML='<div class="card" style="margin-top:20px"><h2>Chyba načítania dát</h2><div class="sm mut" style="margin-bottom:12px">Obnov stránku — data.js sa stiahne raz a potom funguje offline.</div><button class="btn" onclick="location.reload()">🔄 Obnov stránku</button></div>';
