@@ -87,7 +87,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=26"></script>
+<script src="data.js?v=27"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -165,6 +165,9 @@ function hav(a,b){
 function fmt(m){return m<950?Math.round(m/10)*10+' m':(m/1000).toFixed(m<9500?1:0)+' km';}
 const TYI={ubytko:'🏠',tunel:'🔦',hranica:'🛂',vyhlad:'👁️',zastavka:'☕',voda:'💧',lod:'⛴️',vlak:'🚂'};
 function poiIc(t){return TYI[t]||'📍';}
+function dnum(s){return parseInt((String(s).match(/\d+/)||[0])[0])||0;}
+const MODEI={'Vlak':'🚂','Loď':'⛴️','Shuttle':'🚐','Taxi':'🚕','Auto':'🚗','Známka':'🎫'};
+function modeIcon(m){return MODEI[m]||'🎫';}
 function day(){return T.days[sel];}
 function nearestIdx(tr,p){let bi=0,bd=1e15;for(let i=0;i<tr.length;i++){const d=hav(tr[i],p);if(d<bd){bd=d;bi=i}}return bi;}
 function accForDay(id){
@@ -400,8 +403,8 @@ function drawRoutePreview(ctx,stops,W,H,dark){
 /* ---------- PLÁN ---------- */
 function plan(){
   let h=`<div class="card"><h2 style="margin:0 0 6px">Rezervácie & cut-offy</h2>`;
-  T.accCutoffs.forEach(c=>h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}<b>${esc(c.day)}</b> ${esc(c.what)} <b>(${esc(c.when)})</b></div>`);
-  T.reservations.forEach(r=>h+=`<div class="prox"><div class="ic">🎫</div><div style="flex:1;min-width:0"><div style="font-weight:600" class="sm">${esc(r.what)}</div><div class="xs mut">${esc(r.day)} · ${esc(r.when)}</div></div><a class="d sm" href="${safeUrl(r.url)}" target="_blank" rel="noopener" style="color:var(--accent)">link ↗</a></div>`);
+  [...T.accCutoffs].sort((a,b)=>dnum(a.day)-dnum(b.day)).forEach(c=>h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}<b>${esc(c.day)}</b> ${esc(c.what)} <b>(${esc(c.when)})</b></div>`);
+  [...T.reservations].sort((a,b)=>dnum(a.day)-dnum(b.day)).forEach(r=>h+=`<div class="prox"><div class="ic">${modeIcon(r.mode)}</div><div style="flex:1;min-width:0"><div class="sm">${r.mode?`<b style="color:var(--accent)">${esc(r.mode)}</b> · `:''}<b>${esc(r.what)}</b></div><div class="xs mut">${esc(r.day)} · ${esc(r.when)}</div></div><a class="d sm" href="${safeUrl(r.url)}" target="_blank" rel="noopener" style="color:var(--accent)">link ↗</a></div>`);
   h+=`</div>`;
   h+=`<div class="card"><h2 style="margin:0 0 6px">Ubytovania</h2>`;
   if(T.meta&&T.meta.accTotal)h+=`<div class="xs mut" style="margin-bottom:6px">spolu €${T.meta.accTotal} · ~€${T.meta.accPerPerson}/os.</div>`;
