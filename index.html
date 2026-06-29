@@ -82,7 +82,9 @@ let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTi
 function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function safeUrl(u){try{const p=new URL(u||'');return/^https?:$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
 function navUrl(u){try{const p=new URL(u||'');return/^(https?|om|komoot|geo):$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
-function omUrl(d){const tr=d.track||[];const acc=accForDay(d.id);const c=tr.length?tr[0]:d.accCoord||(acc&&acc.coord)||[46.3,13.3];return`om://map?v=1&ll=${c[0]},${c[1]}&n=${encodeURIComponent(d.id+' '+d.title)}`;}
+function dayCoord(d){const tr=d.track||[];const acc=accForDay(d.id);return tr.length?tr[0]:d.accCoord||(acc&&acc.coord)||[46.3,13.3];}
+function omUrl(d){const c=dayCoord(d);return`om://map?v=1&ll=${c[0]},${c[1]}&n=${encodeURIComponent(d.id+' '+d.title)}`;}
+function komootUrl(d){if(d.komoot)return d.komoot;const c=dayCoord(d);return`https://www.komoot.com/plan/@${c[0]},${c[1]},13z`;}
 
 function curIdx(){
   const today=new Date().toLocaleDateString('sv'); // YYYY-MM-DD local
@@ -218,9 +220,9 @@ function mapa(){
   <div class="card">
     <div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill">${d.trackKm?d.trackKm+' km':esc(d.type)}</span></div>
     <canvas id="cv"></canvas>
-    <div class="note">Schematický náhľad. Navigácia: Komoot (Draho) · Organic Maps (Petr)</div>
+    <div class="note">Schematický náhľad. Navigácia: Komoot · Organic Maps${d.komoot?'':' (Komoot otvorí miesto, nie hotovú trasu)'}</div>
     <div class="btn2" style="margin-top:8px">
-      ${d.komoot?`<a class="btn" href="${safeUrl(d.komoot)}" target="_blank" rel="noopener">🗺️ Komoot</a>`:''}
+      <a class="btn" href="${safeUrl(komootUrl(d))}" target="_blank" rel="noopener">🗺️ Komoot</a>
       <a class="btn sec" href="${navUrl(omUrl(d))}" target="_blank" rel="noopener">🗺️ Organic Maps</a>
     </div>
     ${gpsBtn('📍 Ukáž moju polohu')}
