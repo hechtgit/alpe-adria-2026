@@ -75,14 +75,14 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=8"></script>
+<script src="data.js?v=10"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
 function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function safeUrl(u){try{const p=new URL(u||'');return/^https?:$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
 function navUrl(u){try{const p=new URL(u||'');return/^(https?|om|komoot|geo):$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
-function dayCoord(d){const tr=d.track||[];const acc=accForDay(d.id);return tr.length?tr[0]:d.accCoord||(acc&&acc.coord)||[46.3,13.3];}
+function dayCoord(d){const tr=d.track||[];const acc=accForDay(d.id);const rp=d.routePreview;return tr.length?tr[0]:d.accCoord||(acc&&acc.coord)||(rp&&rp.length&&rp[rp.length-1].c)||[46.3,13.3];}
 function omUrl(d){const c=dayCoord(d);return`om://map?v=1&ll=${c[0]},${c[1]}&n=${encodeURIComponent(d.id+' '+d.title)}`;}
 function komootUrl(d){if(d.komoot)return d.komoot;const c=dayCoord(d);return`https://www.komoot.com/plan/@${c[0]},${c[1]},13z`;}
 
@@ -167,7 +167,7 @@ function dnes(){
       h+=`<div class="prox ${w?'warn':''}"><div class="ic">${poiIc(p.type)}</div><div style="flex:1;min-width:0"><div style="font-weight:600">${esc(p.name)}</div><div class="xs mut">${esc(p.info||p.type)}</div></div><div class="d">${fmt(p.dist)}</div></div>`;});
     h+=`<div class="sm mut" style="margin-top:8px">Do cieľa ~${fmt(px.rem)} po trase.</div>`;
   } else if(!d.track||!d.track.length){
-    const noTrMsg=d.type==='voľno'?'Voľný deň — bez naplánovanej cyklotrasy.':'Bez GPX cyklotrasy pre tento deň.';
+    const noTrMsg=d.type==='voľno'?'Voľný deň — bez naplánovanej cyklotrasy.':d.routePreview&&d.routePreview.length?'Prejazdový deň — schéma trasy v záložke Mapa.':'Bez GPX cyklotrasy pre tento deň.';
     h+=`<div class="sm mut" style="padding:6px 0">${noTrMsg}</div>`;
   } else {
     h+=`<div class="sm mut" style="padding:6px 0">Zisti polohu a appka ukáže najbližšie body pred tebou na trase ${d.id}.</div>`;
@@ -249,6 +249,7 @@ function drawTrack(d){
 
   const tr=d.track||[];
   if(!tr.length){
+    if(d.routePreview&&d.routePreview.length)return drawRoutePreview(ctx,d.routePreview,W,H,dark);
     ctx.fillStyle=dark?'#a3a299':'#6b6a64';
     ctx.font='14px -apple-system,system-ui,sans-serif';
     ctx.textAlign='center';ctx.textBaseline='middle';
@@ -273,6 +274,27 @@ function drawTrack(d){
     ctx.fillStyle='#185fa5';ctx.beginPath();ctx.arc(sx(pos[1]),sy(pos[0]),7,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();
   }
+}
+function drawRoutePreview(ctx,stops,W,H,dark){
+  const pts=stops.map(s=>s.c);
+  const la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
+  const minLa=Math.min(...la),maxLa=Math.max(...la),minLo=Math.min(...lo),maxLo=Math.max(...lo);
+  const pad=42;
+  const sx=lon=>pad+(lon-minLo)/((maxLo-minLo)||1)*(W-2*pad);
+  const sy=lat=>H-pad-(lat-minLa)/((maxLa-minLa)||1)*(H-2*pad);
+  ctx.strokeStyle=dark?'#a3a299':'#6b6a64';ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.setLineDash([5,5]);
+  ctx.beginPath();pts.forEach((p,i)=>{i?ctx.lineTo(sx(p[1]),sy(p[0])):ctx.moveTo(sx(p[1]),sy(p[0]));});ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='11px -apple-system,system-ui,sans-serif';ctx.textBaseline='middle';
+  stops.forEach((s,i)=>{
+    const x=sx(s.c[1]),y=sy(s.c[0]),first=i===0,last=i===stops.length-1;
+    ctx.fillStyle=first?'#15803d':last?'#9a3412':(dark?'#a3a299':'#6b6a64');
+    ctx.beginPath();ctx.arc(x,y,first||last?5:3.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=dark?'#f1efe8':'#1c1c1a';
+    ctx.textAlign=x>W-58?'right':(x<58?'left':'center');
+    ctx.fillText(s.n,x,y<22?y+14:y-9);
+  });
 }
 
 /* ---------- PLÁN ---------- */
