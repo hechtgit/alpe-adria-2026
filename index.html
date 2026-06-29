@@ -79,13 +79,10 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
-function safeLSGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
-function safeLSSet(k,v){try{localStorage.setItem(k,v);return true;}catch(_){showToast('⚠️ Stav sa neuložil (plné úložisko).');return false;}}
 function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function safeUrl(u){try{const p=new URL(u||'');return/^https?:$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
 function navUrl(u){try{const p=new URL(u||'');return/^(https?|om|komoot|geo):$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
 function omUrl(d){const tr=d.track||[];const acc=accForDay(d.id);const c=tr.length?tr[0]:d.accCoord||(acc&&acc.coord)||[46.3,13.3];return`om://map?v=1&ll=${c[0]},${c[1]}&n=${encodeURIComponent(d.id+' '+d.title)}`;}
-function loadGrp(){try{const s=safeLSGet('grp');if(!s)return{};const v=JSON.parse(s);return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch(_){return {};}}
 
 function curIdx(){
   const today=new Date().toLocaleDateString('sv'); // YYYY-MM-DD local
@@ -301,9 +298,7 @@ function dayDetail(){
 function selDay(i){sel=i;pos=null;simIdx=null;render();}
 
 /* ---------- SOS ---------- */
-const PEOPLE=['Petr','Paja','Draho','Zuzka'];
 function sos(){
-  const myName=safeLSGet('myName')||'';
   let h=`<div class="card"><h2 style="margin:0 0 8px">Núdzové čísla</h2>
    <div class="person"><span>🇦🇹 Rakúsko — všeobecné</span><a class="callbtn" href="tel:112">112</a></div>
    <div class="person"><span>🇦🇹 Horská záchrana (ÖBRD)</span><a class="callbtn" href="tel:140">140</a></div>
@@ -318,24 +313,12 @@ function sos(){
    <button class="btn sec" onclick="sharePos()">✉️ Pošli polohu SMS-kou</button>
    <button class="btn sec" onclick="copyPos()">📋 Skopíruj súradnice</button></div>`;
 
-  h+=`<div class="card"><h2 style="margin:0 0 6px">Skupina — check-in</h2>
-   <div class="xs mut" style="margin-bottom:8px">Lokálne, bez backendu. Live poloha: WhatsApp Live / Komoot Live Track.</div>
-   <div id="grp"></div>
-   <div class="btn2" style="margin-top:4px">
-     <button class="btn" onclick="setStatus('ok')">✓ Som OK</button>
-     <button class="btn sec" onclick="setStatus('wait')">⏸ Čakám</button>
-     <button class="btn sec" style="border-color:#dc2626;color:#dc2626" onclick="confirmHelp()">🆘 Pomoc!</button>
-   </div></div>`;
+  h+=`<div class="card"><h2 style="margin:0 0 6px">Núdza</h2>
+   <div class="xs mut" style="margin-bottom:8px">Zistí polohu a otvorí zdieľanie (SMS / WhatsApp) s GPS súradnicami pre skupinu alebo záchranárov.</div>
+   <button class="btn" style="background:#dc2626" onclick="confirmHelp()">🆘 Pošli POMOC s polohou</button></div>`;
 
-  h+=`<div class="card"><h3>Som (pre check-in)</h3>
-   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
-     ${PEOPLE.map(p=>`<button class="btn ${myName===p?'':'sec'}" style="width:calc(50% - 4px);padding:10px;font-size:14px;margin:0" onclick="setMyName('${p}')">${p}</button>`).join('')}
-   </div>
-   ${myName?`<div class="xs mut" style="margin-top:6px;text-align:center">Prihlásený ako <b>${myName}</b></div>`:'<div class="xs mut" style="margin-top:6px">Vyber svoje meno pred check-inom.</div>'}</div>`;
-
-  V.innerHTML=h;renderGroup();
+  V.innerHTML=h;
 }
-function setMyName(n){safeLSSet('myName',n);render();}
 function posText(){if(!pos)return'';const acc=posAccuracy!=null?` ±${Math.round(posAccuracy)}m`:'';return`Som tu: ${pos[0].toFixed(5)},${pos[1].toFixed(5)}${acc} https://www.google.com/maps?q=${pos[0]},${pos[1]}`;}
 async function sharePos(){
   if(simIdx!=null){showToast('⚠️ Simulovaná poloha — najprv aktivuj GPS!');return;}
@@ -360,41 +343,25 @@ function copyPos(){
   }
 }
 async function confirmHelp(){
-  if(!confirm('🆘 POMOC — zdieľa polohu skupine/záchranárom. Pokračovať?'))return;
-  const me=safeLSGet('myName')||'?';
-  // Record help intent immediately (user confirmed — independent of delivery)
-  try{const g=loadGrp();g[me]={s:'help',t:Date.now()};safeLSSet('grp',JSON.stringify(g));renderGroup();}catch(_){}
-  const who=me&&me!=='?'?` (${me})`:'';
-  const ageMin=posTimestamp?Math.round((Date.now()-posTimestamp)/60000):null;
-  const ageNote=ageMin!=null&&ageMin>5?` [poloha ${ageMin} min stará]`:'';
-  const accNote=posAccuracy!=null?` ±${Math.round(posAccuracy)}m`:'';
-  const body=pos&&simIdx==null
-    ?`🆘 POMOC POTREBUJEM${who}! Som tu: ${pos[0].toFixed(5)},${pos[1].toFixed(5)}${accNote}${ageNote} https://maps.google.com?q=${pos[0]},${pos[1]}`
-    :`🆘 POMOC POTREBUJEM${who}! Zavolajte 112. Polohu neviem zdieľať (GPS nezistená).`;
-  if(navigator.share){
-    try{await navigator.share({title:'🆘 POMOC',text:body});}
-    catch(err){if(err.name!=='AbortError')location.href='sms:?body='+encodeURIComponent(body);}
-  }else{location.href='sms:?body='+encodeURIComponent(body);}
-}
-function setStatus(s){
-  const me=safeLSGet('myName');
-  if(!me){showToast('Najprv vyber svoje meno (sekcia dole).');return;}
-  const g=loadGrp();
-  g[me]={s,t:Date.now()};safeLSSet('grp',JSON.stringify(g));renderGroup();
-}
-function renderGroup(){
-  const el=document.getElementById('grp');if(!el)return;
-  const g=loadGrp();
-  const lbls={ok:'Som OK ✓',wait:'Čakám tu ⏸',help:'POMOC 🆘'};
-  function personRow(name,x){
-    const lbl=x?lbls[x.s]||x.s:'—';
-    const minAgo=x?Math.round((Date.now()-x.t)/60000):null;
-    const ago=minAgo===0?'práve teraz':minAgo!=null?minAgo+' min':'';
-    return `<div class="person"><span class="dot ${x?x.s:''}"></span><b style="margin-left:2px">${esc(name)}</b><span class="sm mut" style="margin-left:8px">${lbl}</span><span class="xs mut" style="margin-left:auto">${ago}</span></div>`;
-  }
-  let rows=PEOPLE.map(p=>personRow(p,g[p])).join('');
-  if(g['?']&&g['?'].s==='help')rows+=personRow('? (neznámy)',g['?']);
-  el.innerHTML=rows;
+  if(!confirm('🆘 POMOC — zdieľa tvoju polohu. Pokračovať?'))return;
+  const send=()=>{
+    const ageMin=posTimestamp?Math.round((Date.now()-posTimestamp)/60000):null;
+    const ageNote=ageMin!=null&&ageMin>5?` [poloha ${ageMin} min stará]`:'';
+    const accNote=posAccuracy!=null?` ±${Math.round(posAccuracy)}m`:'';
+    const body=pos&&simIdx==null
+      ?`🆘 POMOC POTREBUJEM! Som tu: ${pos[0].toFixed(5)},${pos[1].toFixed(5)}${accNote}${ageNote} https://maps.google.com?q=${pos[0]},${pos[1]}`
+      :`🆘 POMOC POTREBUJEM! Zavolajte 112. Polohu neviem zdieľať (GPS nezistená).`;
+    if(navigator.share){
+      navigator.share({title:'🆘 POMOC',text:body}).catch(err=>{if(err.name!=='AbortError')location.href='sms:?body='+encodeURIComponent(body);});
+    }else{location.href='sms:?body='+encodeURIComponent(body);}
+  };
+  // Try to get a fresh fix first; send regardless of result
+  if(navigator.geolocation&&(pos==null||simIdx!=null)){
+    navigator.geolocation.getCurrentPosition(
+      g=>{setPos([g.coords.latitude,g.coords.longitude],null,g.coords.accuracy);send();},
+      ()=>send(),
+      {enableHighAccuracy:true,timeout:8000,maximumAge:30000});
+  }else{send();}
 }
 
 /* ---------- shell ---------- */
