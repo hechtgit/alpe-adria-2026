@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.json">
+<title>Alpe Adria 2026</title>
+<style>
+:root{--bg:#f4f3ee;--card:#fff;--ink:#1c1c1a;--mut:#6b6a64;--line:#e0ded5;--teal:#0f766e;--tealbg:#e1f5ee;
+--warn:#9a3412;--warnbg:#fbeae1;--ok:#15803d;--okbg:#e7f3e1;--accent:#185fa5;}
+@media(prefers-color-scheme:dark){:root{--bg:#15140f;--card:#211f1a;--ink:#f1efe8;--mut:#a3a299;--line:#33312a;
+--tealbg:#0c3a30;--warnbg:#3a1c10;--okbg:#16320f;}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;background:var(--teal);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+header b{font-weight:600;font-size:15px}
+header .sub{font-size:12px;opacity:.85}
+.wrap{max-width:520px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin:10px 0}
+.row{display:flex;gap:8px;align-items:center}
+.sp{justify-content:space-between}
+h2{font-size:18px;margin:2px 0 8px;font-weight:600}
+h3{font-size:14px;margin:0 0 6px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:20px;background:var(--tealbg);color:var(--teal);font-weight:600;white-space:nowrap}
+.pill.w{background:var(--warnbg);color:var(--warn)} .pill.g{background:var(--okbg);color:var(--ok)}
+.mut{color:var(--mut)} .sm{font-size:13px} .xs{font-size:12px}
+.prox{display:flex;align-items:center;gap:11px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.prox:last-child,.person:last-child{border-bottom:0}
+.prox .ic{width:34px;height:34px;border-radius:9px;background:var(--tealbg);display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 34px}
+.prox.warn .ic{background:var(--warnbg)}
+.prox .d{margin-left:auto;font-weight:700;white-space:nowrap;padding-left:6px}
+.btn{display:block;width:100%;text-align:center;background:var(--teal);color:#fff;border:0;border-radius:12px;
+padding:13px;font-size:15px;font-weight:600;margin:8px 0;text-decoration:none;cursor:pointer;-webkit-appearance:none}
+.btn.sec{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn:disabled,.btn[disabled]{opacity:.5;pointer-events:none}
+.btn2{display:flex;gap:8px}.btn2 .btn{margin:8px 0}
+canvas{width:100%;height:240px;background:var(--tealbg);border-radius:12px;display:block}
+input[type=range]{width:100%;margin:6px 0}
+ul{margin:4px 0;padding-left:18px} li{margin:3px 0}
+.warnline{background:var(--warnbg);color:var(--warn);border-radius:9px;padding:8px 10px;font-size:13px;margin:5px 0}
+.daysel{display:flex;gap:6px;overflow-x:auto;padding:4px 0;margin:-2px 0 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.daysel::-webkit-scrollbar{display:none}
+.daysel button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px}
+.daysel button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;
+padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:6}
+nav button{flex:1;background:0;border:0;color:var(--mut);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;cursor:pointer}
+nav button .i{font-size:20px} nav button.on{color:var(--teal)}
+.person{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--mut);flex:0 0 10px}
+.dot.ok{background:var(--ok)} .dot.wait{background:#ca8a04} .dot.help{background:#dc2626}
+.callbtn{margin-left:auto;background:var(--warnbg);color:var(--warn);border:0;border-radius:9px;padding:8px 14px;font-weight:700;font-size:15px;text-decoration:none;flex:0 0 auto}
+.note{font-size:11px;color:var(--mut);margin-top:8px}
+.clamp2{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1c1c1a;color:#fff;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .25s;z-index:99;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.toast.show{opacity:1}
+@media(prefers-color-scheme:dark){.toast{background:#f1efe8;color:#1c1c1a}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:text-bottom;margin-right:5px}
+</style>
+</head>
+<body>
+<header>
+  <div><b>Alpe Adria 2026</b><div class="sub" id="hsub">e-bike · 16.–27.7.</div></div>
+  <div id="hday" class="sub" style="text-align:right"></div>
+</header>
+<div class="wrap" id="view"></div>
+<div class="toast" id="toast"></div>
+
+<nav>
+  <button data-t="dnes" class="on"><span class="i">☀️</span>Dnes</button>
+  <button data-t="mapa"><span class="i">🗺️</span>Mapa</button>
+  <button data-t="plan"><span class="i">📋</span>Plán</button>
+  <button data-t="sos"><span class="i">🆘</span>SOS</button>
+</nav>
+
+<script src="data.js"></script>
+<script>
+const T=window.TRIP, V=document.getElementById('view');
+let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
+function safeLSGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
+function safeLSSet(k,v){try{localStorage.setItem(k,v);return true;}catch(_){showToast('⚠️ Stav sa neuložil (plné úložisko).');return false;}}
+function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function safeUrl(u){try{const p=new URL(u||'');return/^https?:$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
+function loadGrp(){try{const s=safeLSGet('grp');if(!s)return{};const v=JSON.parse(s);return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch(_){return {};}}
+
+function curIdx(){
+  const today=new Date().toLocaleDateString('sv'); // YYYY-MM-DD local
+  if(today<T.meta.start)return 0;
+  if(today>T.meta.end)return T.days.length-1;
+  const ms=new Date(today+'T00:00:00').getTime()-new Date(T.meta.start+'T00:00:00').getTime();
+  return Math.min(T.days.length-1,Math.max(0,Math.floor(ms/864e5)));
+}
+function hav(a,b){
+  const R=6371e3,r=x=>x*Math.PI/180,d1=r(b[0]-a[0]),d2=r(b[1]-a[1]);
+  const h=Math.sin(d1/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(d2/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function fmt(m){return m<950?Math.round(m/10)*10+' m':(m/1000).toFixed(m<9500?1:0)+' km';}
+const TYI={ubytko:'🏠',tunel:'🔦',hranica:'🛂',vyhlad:'👁️',zastavka:'☕',voda:'💧',lod:'⛴️',vlak:'🚂'};
+function poiIc(t){return TYI[t]||'📍';}
+function day(){return T.days[sel];}
+function nearestIdx(tr,p){let bi=0,bd=1e15;for(let i=0;i<tr.length;i++){const d=hav(tr[i],p);if(d<bd){bd=d;bi=i}}return bi;}
+function accForDay(id){
+  const n=parseInt(id.replace('D',''));
+  return T.acc.find(x=>{const p=x.dni.replace(/D/g,'').split('-').map(Number);return p.length===1?p[0]===n:n>=p[0]&&n<=p[1];});
+}
+
+let _toastTimer=null;
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+function setPos(p,sim,acc){pos=p;simIdx=sim??null;posTimestamp=sim!=null?null:Date.now();posAccuracy=sim!=null?null:(acc??null);render();}
+function gps(){
+  if(!navigator.geolocation){showToast('GPS nedostupné v tomto prehliadači.');return;}
+  if(gpsLoading)return;
+  gpsLoading=true;render();
+  navigator.geolocation.getCurrentPosition(
+    g=>{gpsLoading=false;setPos([g.coords.latitude,g.coords.longitude],null,g.coords.accuracy);},
+    e=>{
+      gpsLoading=false;
+      const m=['','GPS prístup zamietnutý — skontroluj nastavenia.','GPS signál nedostupný.','GPS timeout — skús znova.'];
+      showToast(m[e.code]||'GPS chyba.');render();
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:30000}
+  );
+}
+function gpsBtn(lbl){
+  const txt=gpsLoading?'<span class="spin"></span>Zisťujem…':lbl;
+  return `<button class="btn" onclick="gps()" ${gpsLoading?'disabled':''}>${txt}</button>`;
+}
+
+/* ---------- DNES ---------- */
+function proxList(){
+  const d=day(),tr=d.track||[];
+  if(!pos||!tr.length)return null;
+  const mi=nearestIdx(tr,pos);
+  const pts=T.pois.filter(p=>p.day===d.id&&p.coord).map(p=>({...p,ti:nearestIdx(tr,p.coord),dist:hav(pos,p.coord)}));
+  if(d.accCoord)pts.push({name:d.acc?d.acc.split('/').pop().trim():'Ubytovanie',type:'ubytko',coord:d.accCoord,ti:tr.length-1,dist:hav(pos,d.accCoord),info:'cieľ dňa'});
+  let ahead=pts.filter(p=>p.ti>=mi-2).sort((a,b)=>a.ti-b.ti).slice(0,4);
+  if(!ahead.length)ahead=pts.sort((a,b)=>a.dist-b.dist).slice(0,3);
+  let rem=0;for(let i=mi;i<tr.length-1;i++)rem+=hav(tr[i],tr[i+1]);
+  return {ahead,rem,offRoute:hav(pos,tr[mi])};
+}
+function dnes(){
+  const d=day();
+  let h=`<div class="daysel" id="ds"></div>`;
+  h+=`<div class="card"><div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill ${d.type==='voľno'?'g':''}">${esc(d.type)}</span></div>`;
+  h+=`<div class="sm mut" style="margin-top:4px">${esc(d.date)}`+(d.km?` · ${d.km} km`+(d.up!=null?` · ↑${d.up} ↓${d.down} m`:''):'')+`</div>`;
+  if(d.desc)h+=`<div class="sm" style="margin-top:8px">${esc(d.desc)}</div>`;
+  h+=`</div>`;
+
+  h+=`<div class="card">`;
+  h+=`<div class="row sp" style="margin-bottom:4px"><h3 style="margin:0">Najbližšie pred nami</h3>`;
+  if(gpsLoading)h+=`<span class="xs mut"><span class="spin" style="border-top-color:var(--mut)"></span></span>`;
+  else h+=`<span class="xs" style="color:${pos?'var(--ok)':'var(--mut)'}">${pos?'GPS ✓':'GPS'}</span>`;
+  h+=`</div>`;
+  const px=proxList();
+  if(px){
+    if(px.offRoute>500)h+=`<div class="warnline">⚠️ Si ~${fmt(px.offRoute)} od trasy.</div>`;
+    px.ahead.forEach(p=>{const w=p.type==='tunel'||p.type==='hranica'||p.type==='lod';
+      h+=`<div class="prox ${w?'warn':''}"><div class="ic">${poiIc(p.type)}</div><div style="flex:1;min-width:0"><div style="font-weight:600">${esc(p.name)}</div><div class="xs mut">${esc(p.info||p.type)}</div></div><div class="d">${fmt(p.dist)}</div></div>`;});
+    h+=`<div class="sm mut" style="margin-top:8px">Do cieľa ~${fmt(px.rem)} po trase.</div>`;
+  } else if(!d.track||!d.track.length){
+    const noTrMsg=d.type==='voľno'?'Voľný deň — bez naplánovanej cyklotrasy.':'Bez GPX cyklotrasy pre tento deň.';
+    h+=`<div class="sm mut" style="padding:6px 0">${noTrMsg}</div>`;
+  } else {
+    h+=`<div class="sm mut" style="padding:6px 0">Zisti polohu a appka ukáže najbližšie body pred tebou na trase ${d.id}.</div>`;
+  }
+  h+=gpsBtn('📍 Kde som? (GPS)');
+  if(d.track&&d.track.length){
+    const n=d.track.length-1;
+    const pct=simIdx!=null&&n>0?Math.round(simIdx/n*100):0;
+    h+=`<div class="xs mut" style="margin-top:4px">Simulácia polohy (test doma):</div>
+        <input type="range" min="0" max="100" value="${pct}" oninput="simulate(+this.value)">`;
+    if(simIdx!=null)h+=`<div class="xs mut" style="margin-top:2px">Pozícia: ${pct}% trasy</div>`;
+  }
+  h+=`</div>`;
+
+  const dayCuts=[...T.accCutoffs,...T.reservations.map(r=>({day:r.day,what:r.what,when:r.when,status:'todo'}))].filter(c=>{
+    return c.day.replace('D','').split('-').includes(d.id.replace('D',''));
+  });
+  if(dayCuts.length){h+=`<div class="card"><h3>Dnešné</h3>`;
+    dayCuts.forEach(c=>h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}${esc(c.what)} <b>(${esc(c.when)})</b></div>`);h+=`</div>`;}
+
+  if(d.warn&&d.warn.length){h+=`<div class="card"><h3>Pozor</h3>`+d.warn.map(w=>`<div class="warnline">⚠️ ${esc(w)}</div>`).join('')+`</div>`;}
+  {const a=accForDay(d.id);if(d.acc||a){
+    h+=`<div class="card"><h3>Ubytovanie</h3><div class="sm" style="font-weight:600">${esc(d.acc||(a&&a.miesto)||'Ubytovanie')}</div>`;
+    if(a){
+      if(a.adresa)h+=`<div class="xs mut" style="margin-top:3px">${esc(a.adresa)}</div>`;
+      if(a.bike_storage)h+=`<div class="xs clamp2" style="margin-top:5px">🚲 ${esc(a.bike_storage)}</div>`;
+      if(a.kontakt)h+=`<a class="btn sec" style="margin-top:8px" href="tel:${a.kontakt.replace(/[^+\d]/g,'')}">📞 ${esc(a.kontakt)}</a>`;
+    }
+    h+=`</div>`;
+  }}
+  if(d.food&&d.food.length){h+=`<div class="card"><h3>Jedlo & tipy</h3><ul class="sm">`+d.food.concat(d.tips||[]).map(f=>`<li>${esc(f)}</li>`).join('')+`</ul></div>`;}
+  V.innerHTML=h;
+  renderDaysel('ds');
+}
+function simulate(v){
+  const tr=day().track;if(!tr||!tr.length)return;
+  const i=Math.min(tr.length-1,Math.round((tr.length-1)*v/100));
+  setPos(tr[i],i);
+}
+function renderDaysel(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=T.days.map((d,i)=>`<button class="${i===sel?'on':''}" onclick="sel=${i};pos=null;simIdx=null;render()">${esc(d.id)}</button>`).join('');
+  const on=el.querySelector('.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
+}
+
+/* ---------- MAPA ---------- */
+function mapa(){
+  const d=day();
+  V.innerHTML=`<div class="daysel" id="ds"></div>
+  <div class="card">
+    <div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill">${d.trackKm?d.trackKm+' km':esc(d.type)}</span></div>
+    <canvas id="cv"></canvas>
+    <div class="note">Schematický náhľad trasy + body záujmu. Na navigáciu: mapy.cz / Komoot.</div>
+    <div class="btn2" style="margin-top:8px">
+      <a class="btn" href="${mapyUrl(d)}" target="_blank" rel="noopener">📍 Otvoriť v mapy.cz</a>
+      ${d.komoot?`<a class="btn sec" href="${safeUrl(d.komoot)}" target="_blank" rel="noopener">Komoot</a>`:''}
+    </div>
+    ${gpsBtn('📍 Ukáž moju polohu')}
+  </div>`;
+  renderDaysel('ds');
+  requestAnimationFrame(()=>drawTrack(d));
+}
+function mapyUrl(d){
+  const acc=accForDay(d.id);
+  const c=d.track&&d.track.length?d.track[0]:d.accCoord||(acc&&acc.coord)||[46.3,13.3];
+  return `https://mapy.cz/turisticka?x=${c[1]}&y=${c[0]}&z=13`;
+}
+function drawTrack(d){
+  const cv=document.getElementById('cv');if(!cv)return;
+  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const dpr=Math.min(window.devicePixelRatio||1,3);
+  const rect=cv.getBoundingClientRect();
+  const W=Math.round(rect.width)||400, H=240;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+
+  const tr=d.track||[];
+  if(!tr.length){
+    ctx.fillStyle=dark?'#a3a299':'#6b6a64';
+    ctx.font='14px -apple-system,system-ui,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Deň bez GPX náhľadu',W/2,H/2);return;
+  }
+  const all=[...tr];
+  T.pois.filter(p=>p.day===d.id&&p.coord).forEach(p=>all.push(p.coord));
+  if(d.accCoord)all.push(d.accCoord);if(pos)all.push(pos);
+  const la=all.map(p=>p[0]),lo=all.map(p=>p[1]);
+  const minLa=Math.min(...la),maxLa=Math.max(...la),minLo=Math.min(...lo),maxLo=Math.max(...lo);
+  const pad=28;
+  const sx=lon=>pad+(lon-minLo)/((maxLo-minLo)||1)*(W-2*pad);
+  const sy=lat=>H-pad-(lat-minLa)/((maxLa-minLa)||1)*(H-2*pad);
+
+  ctx.strokeStyle=dark?'#34d399':'#0f766e';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();tr.forEach((p,i)=>{i?ctx.lineTo(sx(p[1]),sy(p[0])):ctx.moveTo(sx(p[1]),sy(p[0]));});ctx.stroke();
+  ctx.fillStyle='#15803d';ctx.beginPath();ctx.arc(sx(tr[0][1]),sy(tr[0][0]),5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#9a3412';ctx.beginPath();const trLast=tr[tr.length-1];ctx.arc(sx(trLast[1]),sy(trLast[0]),5,0,Math.PI*2);ctx.fill();
+  ctx.font='13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  T.pois.filter(p=>p.day===d.id&&p.coord).forEach(p=>{ctx.fillText(poiIc(p.type),sx(p.coord[1]),sy(p.coord[0]));});
+  if(pos){
+    ctx.fillStyle='#185fa5';ctx.beginPath();ctx.arc(sx(pos[1]),sy(pos[0]),7,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();
+  }
+}
+
+/* ---------- PLÁN ---------- */
+function plan(){
+  let h=`<div class="card"><h2 style="margin:0 0 6px">Rezervácie & cut-offy</h2>`;
+  T.accCutoffs.forEach(c=>h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}<b>${esc(c.day)}</b> ${esc(c.what)} <b>(${esc(c.when)})</b></div>`);
+  T.reservations.forEach(r=>h+=`<div class="prox"><div class="ic">🎫</div><div style="flex:1;min-width:0"><div style="font-weight:600" class="sm">${esc(r.what)}</div><div class="xs mut">${esc(r.day)} · ${esc(r.when)}</div></div><a class="d sm" href="${safeUrl(r.url)}" target="_blank" rel="noopener" style="color:var(--accent)">link ↗</a></div>`);
+  h+=`</div>`;
+  h+=`<div class="card"><h2 style="margin:0 0 6px">Ubytovania</h2>`;
+  if(T.meta&&T.meta.accTotal)h+=`<div class="xs mut" style="margin-bottom:6px">spolu €${T.meta.accTotal} · ~€${T.meta.accPerPerson}/os.</div>`;
+  T.acc.forEach(a=>{const paid=(a.zaplatene||'').toLowerCase();const cls=paid==='ano'?'g':(paid==='nie'?'w':'');
+    h+=`<div class="prox"><div class="ic">🏠</div><div style="flex:1;min-width:0"><div class="sm" style="font-weight:600">${esc(a.dni)} · ${esc(a.miesto.split('/').pop().trim())}</div><div class="xs mut">${esc(a.adresa||'')}</div>${a.bike_storage?`<div class="xs clamp2" style="margin-top:3px">🚲 ${esc(a.bike_storage)}</div>`:''}</div><span class="pill ${cls}" style="align-self:flex-start;flex-shrink:0;margin-left:8px">${paid==='ano'?'platené':paid==='nie'?'NEpl.':'rezerv.'}</span></div>`;});
+  h+=`</div>`;
+  h+=`<div class="card"><h2 style="margin:0 0 6px">Itinerár</h2><div class="daysel" id="ds2"></div><div id="dd"></div></div>`;
+  V.innerHTML=h;renderDaysel('ds2');dayDetail();
+}
+function dayDetail(){
+  const d=day(),el=document.getElementById('dd');if(!el)return;
+  let h=`<div class="row sp" style="margin-bottom:4px"><b>${d.id} · ${esc(d.title)}</b><span class="pill ${d.type==='voľno'?'g':''}">${esc(d.type)}</span></div>`;
+  h+=`<div class="xs mut" style="margin-bottom:6px">${esc(d.date)}`+(d.km?` · ${d.km} km`+(d.up!=null?` · ↑${d.up} ↓${d.down}`:''): '')+`</div>`;
+  if(d.desc)h+=`<div class="sm">${esc(d.desc)}</div>`;
+  if(d.warn&&d.warn.length)h+=d.warn.map(w=>`<div class="warnline" style="margin-top:6px">⚠️ ${esc(w)}</div>`).join('');
+  if(d.tips&&d.tips.length)h+=`<h3 style="margin-top:10px">Tipy</h3><ul class="sm">`+d.tips.map(t=>`<li>${esc(t)}</li>`).join('')+`</ul>`;
+  if(d.food&&d.food.length)h+=`<h3>Jedlo</h3><ul class="sm">`+d.food.map(f=>`<li>${esc(f)}</li>`).join('')+`</ul>`;
+  if(d.komoot)h+=`<a class="btn sec" style="margin-top:8px" href="${safeUrl(d.komoot)}" target="_blank" rel="noopener">Komoot trasa ↗</a>`;
+  el.innerHTML=h;
+}
+function selDay(i){sel=i;pos=null;simIdx=null;render();}
+
+/* ---------- SOS ---------- */
+const PEOPLE=['Petr','Paja','Draho','Zuzka'];
+function sos(){
+  const myName=safeLSGet('myName')||'';
+  let h=`<div class="card"><h2 style="margin:0 0 8px">Núdzové čísla</h2>
+   <div class="person"><span>🇦🇹 Rakúsko — všeobecné</span><a class="callbtn" href="tel:112">112</a></div>
+   <div class="person"><span>🇦🇹 Horská záchrana (ÖBRD)</span><a class="callbtn" href="tel:140">140</a></div>
+   <div class="person"><span>🇮🇹 Taliansko — záchranka</span><a class="callbtn" href="tel:118">118</a></div>
+   <div class="person"><span>🇸🇮 Slovenija — Gorska reševalna</span><a class="callbtn" href="tel:112">112</a></div>
+   <div class="person"><span>🌍 EÚ — jednotné číslo</span><a class="callbtn" href="tel:112">112</a></div>
+   <div class="note">Alpenverein poistka — maj číslo členskej karty po ruke.</div></div>`;
+
+  h+=`<div class="card"><h2 style="margin:0 0 6px">Moja poloha</h2>
+   <div class="sm ${pos&&simIdx==null?'':'mut'}" style="margin-bottom:8px">${(()=>{if(!pos)return'Poloha nezistená.';if(simIdx!=null)return`🎮 Simulovaná: ${pos[0].toFixed(5)}, ${pos[1].toFixed(5)}`;const tStr=posTimestamp?new Date(posTimestamp).toLocaleTimeString('sk',{hour:'2-digit',minute:'2-digit'}):'';const acc=posAccuracy!=null?` ±${Math.round(posAccuracy)}m`:'';const stale=posTimestamp&&(Date.now()-posTimestamp)>600000?' ⚠️ stará poloha':'';return`${pos[0].toFixed(5)}, ${pos[1].toFixed(5)}${acc} · ${tStr}${stale}`;})()}</div>
+   ${gpsBtn('📍 Zisti polohu')}
+   <button class="btn sec" onclick="sharePos()">✉️ Pošli polohu SMS-kou</button>
+   <button class="btn sec" onclick="copyPos()">📋 Skopíruj súradnice</button></div>`;
+
+  h+=`<div class="card"><h2 style="margin:0 0 6px">Skupina — check-in</h2>
+   <div class="xs mut" style="margin-bottom:8px">Lokálne, bez backendu. Live poloha: WhatsApp Live / Komoot Live Track.</div>
+   <div id="grp"></div>
+   <div class="btn2" style="margin-top:4px">
+     <button class="btn" onclick="setStatus('ok')">✓ Som OK</button>
+     <button class="btn sec" onclick="setStatus('wait')">⏸ Čakám</button>
+     <button class="btn sec" style="border-color:#dc2626;color:#dc2626" onclick="confirmHelp()">🆘 Pomoc!</button>
+   </div></div>`;
+
+  h+=`<div class="card"><h3>Som (pre check-in)</h3>
+   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+     ${PEOPLE.map(p=>`<button class="btn ${myName===p?'':'sec'}" style="width:calc(50% - 4px);padding:10px;font-size:14px;margin:0" onclick="setMyName('${p}')">${p}</button>`).join('')}
+   </div>
+   ${myName?`<div class="xs mut" style="margin-top:6px;text-align:center">Prihlásený ako <b>${myName}</b></div>`:'<div class="xs mut" style="margin-top:6px">Vyber svoje meno pred check-inom.</div>'}</div>`;
+
+  V.innerHTML=h;renderGroup();
+}
+function setMyName(n){safeLSSet('myName',n);render();}
+function posText(){if(!pos)return'';const acc=posAccuracy!=null?` ±${Math.round(posAccuracy)}m`:'';return`Som tu: ${pos[0].toFixed(5)},${pos[1].toFixed(5)}${acc} https://www.google.com/maps?q=${pos[0]},${pos[1]}`;}
+async function sharePos(){
+  if(simIdx!=null){showToast('⚠️ Simulovaná poloha — najprv aktivuj GPS!');return;}
+  if(!pos){showToast('Najprv zisti polohu.');return;}
+  const text=posText();
+  if(navigator.share){
+    try{await navigator.share({title:'Moja poloha',text});}
+    catch(e){if(e.name!=='AbortError')location.href='sms:?body='+encodeURIComponent(text);}
+  } else {
+    location.href='sms:?body='+encodeURIComponent(text);
+  }
+}
+function copyPos(){
+  if(simIdx!=null){showToast('⚠️ Simulovaná poloha — najprv aktivuj GPS!');return;}
+  if(!pos){showToast('Najprv zisti polohu.');return;}
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(posText())
+      .then(()=>showToast('Súradnice skopírované ✓'))
+      .catch(()=>showToast('Kopírovanie zlyhalo.'));
+  } else {
+    showToast('Kopírovanie nedostupné v tomto prehliadači.');
+  }
+}
+async function confirmHelp(){
+  if(!confirm('🆘 POMOC — zdieľa polohu skupine/záchranárom. Pokračovať?'))return;
+  const me=safeLSGet('myName')||'?';
+  // Record help intent immediately (user confirmed — independent of delivery)
+  try{const g=loadGrp();g[me]={s:'help',t:Date.now()};safeLSSet('grp',JSON.stringify(g));renderGroup();}catch(_){}
+  const who=me&&me!=='?'?` (${me})`:'';
+  const ageMin=posTimestamp?Math.round((Date.now()-posTimestamp)/60000):null;
+  const ageNote=ageMin!=null&&ageMin>5?` [poloha ${ageMin} min stará]`:'';
+  const accNote=posAccuracy!=null?` ±${Math.round(posAccuracy)}m`:'';
+  const body=pos&&simIdx==null
+    ?`🆘 POMOC POTREBUJEM${who}! Som tu: ${pos[0].toFixed(5)},${pos[1].toFixed(5)}${accNote}${ageNote} https://maps.google.com?q=${pos[0]},${pos[1]}`
+    :`🆘 POMOC POTREBUJEM${who}! Zavolajte 112. Polohu neviem zdieľať (GPS nezistená).`;
+  if(navigator.share){
+    try{await navigator.share({title:'🆘 POMOC',text:body});}
+    catch(err){if(err.name!=='AbortError')location.href='sms:?body='+encodeURIComponent(body);}
+  }else{location.href='sms:?body='+encodeURIComponent(body);}
+}
+function setStatus(s){
+  const me=safeLSGet('myName');
+  if(!me){showToast('Najprv vyber svoje meno (sekcia dole).');return;}
+  const g=loadGrp();
+  g[me]={s,t:Date.now()};safeLSSet('grp',JSON.stringify(g));renderGroup();
+}
+function renderGroup(){
+  const el=document.getElementById('grp');if(!el)return;
+  const g=loadGrp();
+  const lbls={ok:'Som OK ✓',wait:'Čakám tu ⏸',help:'POMOC 🆘'};
+  function personRow(name,x){
+    const lbl=x?lbls[x.s]||x.s:'—';
+    const minAgo=x?Math.round((Date.now()-x.t)/60000):null;
+    const ago=minAgo===0?'práve teraz':minAgo!=null?minAgo+' min':'';
+    return `<div class="person"><span class="dot ${x?x.s:''}"></span><b style="margin-left:2px">${esc(name)}</b><span class="sm mut" style="margin-left:8px">${lbl}</span><span class="xs mut" style="margin-left:auto">${ago}</span></div>`;
+  }
+  let rows=PEOPLE.map(p=>personRow(p,g[p])).join('');
+  if(g['?']&&g['?'].s==='help')rows+=personRow('? (neznámy)',g['?']);
+  el.innerHTML=rows;
+}
+
+/* ---------- shell ---------- */
+function render(){
+  if(!T)return;
+  const d=day();
+  document.getElementById('hday').innerHTML=`${esc(d.id)}/${T.days.length} · ${esc(d.date)}`;
+  if(tab==='dnes')dnes();
+  else if(tab==='mapa')mapa();
+  else if(tab==='plan')plan();
+  else sos();
+  if(tab==='plan')document.querySelectorAll('#ds2 button').forEach((b,i)=>b.onclick=()=>selDay(i));
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  tab=b.dataset.t;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  render();window.scrollTo(0,0);
+});
+if(!window.TRIP){
+  V.innerHTML='<div class="card" style="margin-top:20px"><h2>Chyba načítania dát</h2><div class="sm mut" style="margin-bottom:12px">Obnov stránku — data.js sa stiahne raz a potom funguje offline.</div><button class="btn" onclick="location.reload()">🔄 Obnov stránku</button></div>';
+}else{render();}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
