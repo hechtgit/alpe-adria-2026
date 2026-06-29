@@ -89,7 +89,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=20"></script>
+<script src="data.js?v=21"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -103,6 +103,8 @@ function refreshApp(){
   })();
 }
 function toggleStops(){showStops=!showStops;render();}
+function isDev(){try{return localStorage.getItem('devMode')==='1';}catch(_){return false;}}
+(function(){try{const p=new URLSearchParams(location.search);if(p.has('dev')){if(p.get('dev')==='0')localStorage.removeItem('devMode');else localStorage.setItem('devMode','1');}}catch(_){}}());
 function updateOffbar(){const el=document.getElementById('offbar');if(el)el.classList.toggle('show',!navigator.onLine);}
 window.addEventListener('online',updateOffbar);
 window.addEventListener('offline',updateOffbar);
@@ -254,10 +256,10 @@ function dnes(){
       h+=`</div>`;
     }
   }
-  if(d.track&&d.track.length){
+  if(isDev()&&d.track&&d.track.length){
     const n=d.track.length-1;
     const pct=simIdx!=null&&n>0?Math.round(simIdx/n*100):0;
-    h+=`<div class="xs mut" style="margin-top:4px">Simulácia polohy (test doma):</div>
+    h+=`<div class="xs mut" style="margin-top:4px">🧪 DEV — Simulácia polohy (test doma):</div>
         <input type="range" min="0" max="100" value="${pct}" oninput="simulate(+this.value)">`;
     if(simIdx!=null)h+=`<div class="xs mut" style="margin-top:2px">Pozícia: ${pct}% trasy</div>`;
   }

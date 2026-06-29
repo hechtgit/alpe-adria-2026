@@ -1,5 +1,5 @@
-const C='alpeadria-v20';
-const ASSETS=['./','./index.html','./data.js?v=20','./manifest.json','./D12b_JeseniceStation_Bled_okruh.gpx','./D12b_JeseniceStation_Bled_okruh.kml'];
+const C='alpeadria-v21';
+const ASSETS=['./','./index.html','./data.js?v=21','./manifest.json','./D12b_JeseniceStation_Bled_okruh.gpx','./D12b_JeseniceStation_Bled_okruh.kml'];
 
 function netRace(req,ms){
   return Promise.race([
