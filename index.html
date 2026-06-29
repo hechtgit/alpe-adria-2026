@@ -75,7 +75,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=14"></script>
+<script src="data.js?v=15"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -223,12 +223,13 @@ function mapa(){
   <div class="card">
     <div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill">${d.trackKm?d.trackKm+' km':esc(d.type)}</span></div>
     <canvas id="cv"></canvas>
-    <div class="note">${d.gpx?'Reálna GPX trasa. Stiahni nižšie a otvor v Komoot / Organic Maps pre navigáciu.':'Schematický náhľad. Navigácia: Komoot · Organic Maps'+(d.komoot?'':' (Komoot otvorí miesto, nie hotovú trasu)')}</div>
+    <div class="note">${d.gpx?'Reálna GPX trasa. Stiahni súbor a otvor v Komoot / Organic Maps pre navigáciu.':'Schematický náhľad. Navigácia: Komoot · Organic Maps'+(d.komoot?'':' (Komoot otvorí miesto, nie hotovú trasu)')}</div>
     <div class="btn2" style="margin-top:8px">
       <a class="btn sec" href="${safeUrl(komootUrl(d))}" target="_blank" rel="noopener">🗺️ Komoot</a>
       <a class="btn sec" href="${navUrl(omUrl(d))}" target="_blank" rel="noopener">🗺️ Organic Maps</a>
     </div>
-    ${d.gpx?`<a class="btn" href="${encodeURI(d.gpx)}" download>⤓ Stiahnuť GPX trasu (${d.trackKm} km)</a>`:''}
+    ${d.gpx?`<a class="btn" href="${encodeURI(d.gpx)}" download>⤓ GPX trasa (Komoot) · ${d.trackKm} km</a>`:''}
+    ${d.kml?`<a class="btn sec" href="${encodeURI(d.kml)}" download>⤓ KML trasa (Organic Maps)</a>`:''}
     ${gpsBtn('📍 Ukáž moju polohu')}
   </div>`;
   renderDaysel('ds');
