@@ -9,9 +9,10 @@
 <style>
 :root{--bg:#f4f3ee;--card:#fff;--ink:#1c1c1a;--mut:#6b6a64;--line:#e0ded5;--teal:#0f766e;--tealbg:#e1f5ee;
 --warn:#9a3412;--warnbg:#fbeae1;--ok:#15803d;--okbg:#e7f3e1;--accent:#185fa5;--fs:1;}
-body.fs-l{--fs:1.18} body.fs-xl{--fs:1.4}
-@media(prefers-color-scheme:dark){:root{--bg:#15140f;--card:#211f1a;--ink:#f1efe8;--mut:#a3a299;--line:#33312a;
+body.fs-l{--fs:1.4} body.fs-xl{--fs:1.75}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15140f;--card:#211f1a;--ink:#f1efe8;--mut:#a3a299;--line:#33312a;
 --tealbg:#0c3a30;--warnbg:#5a241a;--warn:#ffffff;--okbg:#16320f;}}
+:root[data-theme="dark"]{--bg:#15140f;--card:#211f1a;--ink:#f1efe8;--mut:#a3a299;--line:#33312a;--tealbg:#0c3a30;--warnbg:#5a241a;--warn:#ffffff;--okbg:#16320f;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-size:calc(16px*var(--fs));line-height:1.45;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 header{position:sticky;top:0;background:var(--teal);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;z-index:5}
@@ -56,7 +57,8 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
 .clamp2{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1c1c1a;color:#fff;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .25s;z-index:99;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 .toast.show{opacity:1}
-@media(prefers-color-scheme:dark){.toast{background:#f1efe8;color:#1c1c1a}}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .toast{background:#f1efe8;color:#1c1c1a}}
+:root[data-theme="dark"] .toast{background:#f1efe8;color:#1c1c1a}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:text-bottom;margin-right:5px}
 </style>
@@ -64,8 +66,9 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
 <body>
 <header>
   <div><b>Alpe Adria 2026</b><div class="sub" id="hsub">e-bike · 16.–28.7.</div></div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <button id="fsBtn" onclick="cycleFontSize()" aria-label="Veľkosť písma" style="background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;min-width:38px;height:34px;font-weight:700;cursor:pointer;font-size:15px;padding:0 6px">A</button>
+  <div style="display:flex;align-items:center;gap:7px">
+    <button id="themeBtn" onclick="toggleTheme()" aria-label="Svetlý/tmavý režim" style="background:rgba(255,255,255,.18);border:0;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:16px;line-height:1;padding:0">☀️</button>
+    <button id="fsBtn" onclick="cycleFontSize()" aria-label="Veľkosť písma" style="background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;height:34px;min-width:48px;font-weight:700;cursor:pointer;padding:0 8px;display:inline-flex;align-items:baseline;justify-content:center;gap:1px"><span style="font-size:11px">A</span><span style="font-size:15px">A</span><span style="font-size:19px">A</span></button>
     <div id="hday" class="sub" style="text-align:right"></div>
   </div>
 </header>
@@ -79,7 +82,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=18"></script>
+<script src="data.js?v=19"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -90,13 +93,32 @@ function applyFontSize(){
   document.body.classList.remove('fs-l','fs-xl');
   if(lvl===1)document.body.classList.add('fs-l');
   else if(lvl===2)document.body.classList.add('fs-xl');
-  const b=document.getElementById('fsBtn');if(b)b.textContent=['A','A⁺','A⁺⁺'][lvl];
+  const b=document.getElementById('fsBtn');if(b)b.style.background=lvl?'rgba(255,255,255,.34)':'rgba(255,255,255,.18)';
 }
 function cycleFontSize(){
   const lvl=(fsGet()+1)%3;
   try{localStorage.setItem('fontSize',lvl);}catch(_){}
   applyFontSize();
-  showToast(['Normálne písmo','Väčšie písmo','Najväčšie písmo'][lvl]);
+  showToast(['Normálne písmo','Veľké písmo','Najväčšie písmo'][lvl]);
+}
+function curTheme(){
+  let t=null;try{t=localStorage.getItem('theme');}catch(_){}
+  if(t==='light'||t==='dark')return t;
+  return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+}
+function isDark(){return curTheme()==='dark';}
+function applyTheme(){
+  let t=null;try{t=localStorage.getItem('theme');}catch(_){}
+  if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
+  else document.documentElement.removeAttribute('data-theme');
+  const b=document.getElementById('themeBtn');if(b)b.textContent=isDark()?'🌙':'☀️';
+}
+function toggleTheme(){
+  const next=isDark()?'light':'dark';
+  try{localStorage.setItem('theme',next);}catch(_){}
+  applyTheme();
+  if(window.TRIP)render();
+  showToast(next==='dark'?'Tmavý režim':'Svetlý režim');
 }
 function safeUrl(u){try{const p=new URL(u||'');return/^https?:$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
 function navUrl(u){try{const p=new URL(u||'');return/^(https?|om|komoot|geo):$/.test(p.protocol)?p.href.replace(/"/g,'%22'):'#';}catch(_){return '#';}}
@@ -260,7 +282,7 @@ function mapyUrl(d){
 }
 function drawTrack(d){
   const cv=document.getElementById('cv');if(!cv)return;
-  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const dark=isDark();
   const dpr=Math.min(window.devicePixelRatio||1,3);
   const rect=cv.getBoundingClientRect();
   const W=Math.round(rect.width)||400, H=240;
@@ -432,7 +454,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
   render();window.scrollTo(0,0);
 });
-applyFontSize();
+applyTheme();applyFontSize();
 if(!window.TRIP){
   V.innerHTML='<div class="card" style="margin-top:20px"><h2>Chyba načítania dát</h2><div class="sm mut" style="margin-bottom:12px">Obnov stránku — data.js sa stiahne raz a potom funguje offline.</div><button class="btn" onclick="location.reload()">🔄 Obnov stránku</button></div>';
 }else{render();}
