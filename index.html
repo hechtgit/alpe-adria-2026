@@ -11,7 +11,7 @@
 --warn:#9a3412;--warnbg:#fbeae1;--ok:#15803d;--okbg:#e7f3e1;--accent:#185fa5;--fs:1;}
 body.fs-l{--fs:1.18} body.fs-xl{--fs:1.4}
 @media(prefers-color-scheme:dark){:root{--bg:#15140f;--card:#211f1a;--ink:#f1efe8;--mut:#a3a299;--line:#33312a;
---tealbg:#0c3a30;--warnbg:#3a1c10;--okbg:#16320f;}}
+--tealbg:#0c3a30;--warnbg:#5a241a;--warn:#ffffff;--okbg:#16320f;}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-size:calc(16px*var(--fs));line-height:1.45;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 header{position:sticky;top:0;background:var(--teal);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;z-index:5}
@@ -51,7 +51,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
 .person{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--mut);flex:0 0 10px}
 .dot.ok{background:var(--ok)} .dot.wait{background:#ca8a04} .dot.help{background:#dc2626}
-.callbtn{margin-left:auto;background:#dc2626;color:#fff;border:0;border-radius:9px;padding:8px 14px;font-weight:700;font-size:calc(15px*var(--fs));text-decoration:none;flex:0 0 auto}
+.callbtn{margin-left:auto;background:var(--warnbg);color:var(--warn);border:0;border-radius:9px;padding:8px 14px;font-weight:700;font-size:calc(15px*var(--fs));text-decoration:none;flex:0 0 auto}
 .note{font-size:calc(11px*var(--fs));color:var(--mut);margin-top:8px}
 .clamp2{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1c1c1a;color:#fff;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .25s;z-index:99;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.3)}
@@ -79,7 +79,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=17"></script>
+<script src="data.js?v=18"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
