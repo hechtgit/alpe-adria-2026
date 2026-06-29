@@ -1,5 +1,5 @@
-const C='alpeadria-v16';
-const ASSETS=['./','./index.html','./data.js?v=16','./manifest.json'];
+const C='alpeadria-v17';
+const ASSETS=['./','./index.html','./data.js?v=17','./manifest.json'];
 
 function netRace(req,ms){
   return Promise.race([

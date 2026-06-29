@@ -51,7 +51,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
 .person{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--mut);flex:0 0 10px}
 .dot.ok{background:var(--ok)} .dot.wait{background:#ca8a04} .dot.help{background:#dc2626}
-.callbtn{margin-left:auto;background:var(--warnbg);color:var(--warn);border:0;border-radius:9px;padding:8px 14px;font-weight:700;font-size:calc(15px*var(--fs));text-decoration:none;flex:0 0 auto}
+.callbtn{margin-left:auto;background:#dc2626;color:#fff;border:0;border-radius:9px;padding:8px 14px;font-weight:700;font-size:calc(15px*var(--fs));text-decoration:none;flex:0 0 auto}
 .note{font-size:calc(11px*var(--fs));color:var(--mut);margin-top:8px}
 .clamp2{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1c1c1a;color:#fff;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .25s;z-index:99;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.3)}
@@ -79,7 +79,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=16"></script>
+<script src="data.js?v=17"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
