@@ -89,7 +89,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=21"></script>
+<script src="data.js?v=22"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -302,17 +302,21 @@ function renderDaysel(id){
 /* ---------- MAPA ---------- */
 function mapa(){
   const d=day();
+  let nav;
+  if(d.routes&&d.routes.length){
+    const multi=d.routes.length>1;
+    nav=`<div class="note">Stiahni trasu a otvor v Komoot alebo Organic Maps — každý si ju importuje do svojej appky (funguje všetkým 4).</div>`;
+    d.routes.forEach((r,i)=>{
+      nav+=`<div style="margin-top:10px"><div class="sm" style="font-weight:600">${multi?'🚲 Úsek '+(i+1)+': ':'🚲 '}${esc(r.n)}</div><div class="btn2" style="margin-top:6px"><a class="btn sec" href="${encodeURI(r.gpx)}" download>⤓ Komoot${multi?' '+(i+1):''} (GPX)</a><a class="btn sec" href="${encodeURI(r.kml)}" download>⤓ Organic Maps${multi?' '+(i+1):''} (KML)</a></div></div>`;
+    });
+  } else {
+    nav=`<div class="note">${d.routePreview&&d.routePreview.length?'Prejazdový deň — schéma vyššie. ':'Bez cyklotrasy. '}Otvoriť miesto v mape:</div><div class="btn2" style="margin-top:8px"><a class="btn sec" href="${safeUrl(komootUrl(d))}" target="_blank" rel="noopener">🗺️ Komoot</a><a class="btn sec" href="${navUrl(omUrl(d))}" target="_blank" rel="noopener">🗺️ Organic Maps</a></div>`;
+  }
   V.innerHTML=`<div class="daysel" id="ds"></div>
   <div class="card">
     <div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill">${d.trackKm?d.trackKm+' km':esc(d.type)}</span></div>
     <canvas id="cv"></canvas>
-    <div class="note">${d.gpx?'Reálna GPX trasa. Stiahni súbor a otvor v Komoot / Organic Maps pre navigáciu.':'Schematický náhľad. Navigácia: Komoot · Organic Maps'+(d.komoot?'':' (Komoot otvorí miesto, nie hotovú trasu)')}</div>
-    <div class="btn2" style="margin-top:8px">
-      <a class="btn sec" href="${safeUrl(komootUrl(d))}" target="_blank" rel="noopener">🗺️ Komoot</a>
-      <a class="btn sec" href="${navUrl(omUrl(d))}" target="_blank" rel="noopener">🗺️ Organic Maps</a>
-    </div>
-    ${d.gpx?`<a class="btn" href="${encodeURI(d.gpx)}" download>⤓ GPX trasa (Komoot) · ${d.trackKm} km</a>`:''}
-    ${d.kml?`<a class="btn sec" href="${encodeURI(d.kml)}" download>⤓ KML trasa (Organic Maps)</a>`:''}
+    ${nav}
     ${gpsBtn('📍 Ukáž moju polohu')}
   </div>`;
   renderDaysel('ds');
