@@ -1,4 +1,4 @@
-const C='alpeadria-v8';
+const C='alpeadria-v9';
 const ASSETS=['./','./index.html','./data.js?v=8','./manifest.json'];
 
 function netRace(req,ms){
