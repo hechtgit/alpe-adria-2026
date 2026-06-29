@@ -14,7 +14,11 @@ body.fs-l{--fs:1.4} body.fs-xl{--fs:1.75}
 --tealbg:#0c3a30;--warnbg:#5a241a;--warn:#ffffff;--okbg:#16320f;}}
 :root[data-theme="dark"]{--bg:#15140f;--card:#211f1a;--ink:#f1efe8;--mut:#a3a299;--line:#33312a;--tealbg:#0c3a30;--warnbg:#5a241a;--warn:#ffffff;--okbg:#16320f;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);font-size:calc(16px*var(--fs));line-height:1.45;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+body{margin:0;background:var(--bg);color:var(--ink);font-size:calc(16px*var(--fs));line-height:1.45;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+.offbar{background:#9a3412;color:#fff;text-align:center;font-size:13px;font-weight:600;padding:6px 10px;display:none}
+.offbar.show{display:block}
+.fab{position:fixed;right:14px;bottom:calc(90px + env(safe-area-inset-bottom));width:62px;height:62px;border-radius:50%;background:#dc2626;color:#fff;border:0;font-weight:800;font-size:16px;letter-spacing:.5px;box-shadow:0 3px 14px rgba(0,0,0,.4);z-index:7;cursor:pointer;display:none;align-items:center;justify-content:center}
+.fab.show{display:flex}
 header{position:sticky;top:0;background:var(--teal);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;z-index:5}
 header b{font-weight:600;font-size:15px}
 header .sub{font-size:12px;opacity:.85}
@@ -47,8 +51,8 @@ ul{margin:4px 0;padding-left:18px} li{margin:3px 0}
 .daysel button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
 nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;
 padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:6}
-nav button{flex:1;background:0;border:0;color:var(--mut);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;cursor:pointer}
-nav button .i{font-size:20px} nav button.on{color:var(--teal)}
+nav button{flex:1;background:0;border:0;color:var(--mut);font-size:calc(12px*var(--fs));display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;min-height:58px;cursor:pointer}
+nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 .person{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--mut);flex:0 0 10px}
 .dot.ok{background:var(--ok)} .dot.wait{background:#ca8a04} .dot.help{background:#dc2626}
@@ -66,13 +70,16 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
 <body>
 <header>
   <div><b>Alpe Adria 2026</b><div class="sub" id="hsub">e-bike · 16.–28.7.</div></div>
-  <div style="display:flex;align-items:center;gap:7px">
-    <button id="themeBtn" onclick="toggleTheme()" aria-label="Svetlý/tmavý režim" style="background:rgba(255,255,255,.18);border:0;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:16px;line-height:1;padding:0">☀️</button>
-    <button id="fsBtn" onclick="cycleFontSize()" aria-label="Veľkosť písma" style="background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;height:34px;min-width:48px;font-weight:700;cursor:pointer;padding:0 8px;display:inline-flex;align-items:baseline;justify-content:center;gap:1px"><span style="font-size:11px">A</span><span style="font-size:15px">A</span><span style="font-size:19px">A</span></button>
-    <div id="hday" class="sub" style="text-align:right"></div>
+  <div style="display:flex;align-items:center;gap:5px">
+    <button id="themeBtn" onclick="toggleTheme()" aria-label="Svetlý/tmavý režim" style="background:rgba(255,255,255,.18);border:0;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1;padding:0">☀️</button>
+    <button id="fsBtn" onclick="cycleFontSize()" aria-label="Veľkosť písma" style="background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;height:32px;min-width:44px;font-weight:700;cursor:pointer;padding:0 7px;display:inline-flex;align-items:baseline;justify-content:center;gap:1px"><span style="font-size:10px">A</span><span style="font-size:14px">A</span><span style="font-size:18px">A</span></button>
+    <button id="refreshBtn" onclick="refreshApp()" aria-label="Obnoviť app" style="background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1;padding:0">🔄</button>
+    <div id="hday" class="sub" style="text-align:right;margin-left:2px"></div>
   </div>
 </header>
+<div class="offbar" id="offbar">📵 Offline — dáta sú uložené, niektoré odkazy nemusia fungovať</div>
 <div class="wrap" id="view"></div>
+<button class="fab" id="sosFab" aria-label="SOS — núdza">SOS</button>
 <div class="toast" id="toast"></div>
 
 <nav>
@@ -82,10 +89,23 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=19"></script>
+<script src="data.js?v=20"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
+let showStops=false, gpsWatchId=null, _lastGpsRender=0, _lastGpsPos=null;
+function refreshApp(){
+  showToast('Obnovujem…');
+  (async()=>{
+    try{const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();}catch(_){}
+    try{const ks=await caches.keys();for(const k of ks)await caches.delete(k);}catch(_){}
+    location.reload();
+  })();
+}
+function toggleStops(){showStops=!showStops;render();}
+function updateOffbar(){const el=document.getElementById('offbar');if(el)el.classList.toggle('show',!navigator.onLine);}
+window.addEventListener('online',updateOffbar);
+window.addEventListener('offline',updateOffbar);
 function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fsGet(){try{return Math.min(2,Math.max(0,+localStorage.getItem('fontSize')||0));}catch(_){return 0;}}
 function applyFontSize(){
@@ -158,19 +178,28 @@ function showToast(msg){
 function setPos(p,sim,acc){pos=p;simIdx=sim??null;posTimestamp=sim!=null?null:Date.now();posAccuracy=sim!=null?null:(acc??null);render();}
 function gps(){
   if(!navigator.geolocation){showToast('GPS nedostupné v tomto prehliadači.');return;}
-  if(gpsLoading)return;
+  if(gpsWatchId!=null){showToast('📡 GPS sleduje polohu naživo.');return;}
   gpsLoading=true;render();
-  navigator.geolocation.getCurrentPosition(
-    g=>{gpsLoading=false;setPos([g.coords.latitude,g.coords.longitude],null,g.coords.accuracy);},
+  gpsWatchId=navigator.geolocation.watchPosition(
+    g=>{
+      gpsLoading=false;
+      const np=[g.coords.latitude,g.coords.longitude];
+      pos=np;simIdx=null;posTimestamp=Date.now();posAccuracy=g.coords.accuracy;
+      const now=Date.now();
+      if(!_lastGpsPos||hav(_lastGpsPos,np)>25||now-_lastGpsRender>9000){
+        _lastGpsRender=now;_lastGpsPos=np;render();
+      }
+    },
     e=>{
       gpsLoading=false;
       const m=['','GPS prístup zamietnutý — skontroluj nastavenia.','GPS signál nedostupný.','GPS timeout — skús znova.'];
       showToast(m[e.code]||'GPS chyba.');render();
     },
-    {enableHighAccuracy:true,timeout:10000,maximumAge:30000}
+    {enableHighAccuracy:true,timeout:12000,maximumAge:5000}
   );
 }
 function gpsBtn(lbl){
+  if(gpsWatchId!=null&&!gpsLoading)return `<button class="btn sec" onclick="gps()">📡 GPS naživo ✓</button>`;
   const txt=gpsLoading?'<span class="spin"></span>Zisťujem…':lbl;
   return `<button class="btn" onclick="gps()" ${gpsLoading?'disabled':''}>${txt}</button>`;
 }
@@ -196,23 +225,35 @@ function dnes(){
   h+=`</div>`;
 
   h+=`<div class="card">`;
-  h+=`<div class="row sp" style="margin-bottom:4px"><h3 style="margin:0">Najbližšie pred nami</h3>`;
+  h+=`<div class="row sp" style="margin-bottom:4px"><h3 style="margin:0">Dnešná trasa</h3>`;
   if(gpsLoading)h+=`<span class="xs mut"><span class="spin" style="border-top-color:var(--mut)"></span></span>`;
-  else h+=`<span class="xs" style="color:${pos?'var(--ok)':'var(--mut)'}">${pos?'GPS ✓':'GPS'}</span>`;
+  else h+=`<span class="xs" style="color:${pos?'var(--ok)':'var(--mut)'}">${pos?(gpsWatchId!=null?'📡 naživo':'GPS ✓'):'GPS'}</span>`;
   h+=`</div>`;
   const px=proxList();
   if(px){
     if(px.offRoute>500)h+=`<div class="warnline">⚠️ Si ~${fmt(px.offRoute)} od trasy.</div>`;
-    px.ahead.forEach(p=>{const w=p.type==='tunel'||p.type==='hranica'||p.type==='lod';
-      h+=`<div class="prox ${w?'warn':''}"><div class="ic">${poiIc(p.type)}</div><div style="flex:1;min-width:0"><div style="font-weight:600">${esc(p.name)}</div><div class="xs mut">${esc(p.info||p.type)}</div></div><div class="d">${fmt(p.dist)}</div></div>`;});
+    const nxt=px.ahead[0];
+    if(nxt)h+=`<div style="font-weight:700;font-size:calc(17px*var(--fs))">→ ${esc(nxt.name)} · ${fmt(nxt.dist)}</div><div class="xs mut">${esc(nxt.info||nxt.type)}</div>`;
     h+=`<div class="sm mut" style="margin-top:8px">Do cieľa ~${fmt(px.rem)} po trase.</div>`;
   } else if(!d.track||!d.track.length){
     const noTrMsg=d.type==='voľno'?'Voľný deň — bez naplánovanej cyklotrasy.':d.routePreview&&d.routePreview.length?'Prejazdový deň — schéma trasy v záložke Mapa.':'Bez GPX cyklotrasy pre tento deň.';
     h+=`<div class="sm mut" style="padding:6px 0">${noTrMsg}</div>`;
   } else {
-    h+=`<div class="sm mut" style="padding:6px 0">Zisti polohu a appka ukáže najbližšie body pred tebou na trase ${d.id}.</div>`;
+    h+=`<div class="sm mut" style="padding:6px 0">Zisti polohu a appka ukáže najbližší bod pred tebou na trase ${d.id}.</div>`;
   }
   h+=gpsBtn('📍 Kde som? (GPS)');
+  const stops=T.pois.filter(p=>p.day===d.id&&p.coord);
+  if(stops.length){
+    h+=`<button class="btn sec" onclick="toggleStops()">🛑 Zastávky (${stops.length}) ${showStops?'▲':'▼'}</button>`;
+    if(showStops){
+      h+=`<div style="margin-top:2px">`;
+      stops.map(p=>({...p,dist:pos?hav(pos,p.coord):null})).forEach(p=>{
+        const w=p.type==='tunel'||p.type==='hranica'||p.type==='lod';
+        h+=`<div class="prox ${w?'warn':''}"><div class="ic">${poiIc(p.type)}</div><div style="flex:1;min-width:0"><div style="font-weight:600">${esc(p.name)}</div><div class="xs mut">${esc(p.info||p.type)}</div></div>${p.dist!=null?`<div class="d">${fmt(p.dist)}</div>`:''}</div>`;
+      });
+      h+=`</div>`;
+    }
+  }
   if(d.track&&d.track.length){
     const n=d.track.length-1;
     const pct=simIdx!=null&&n>0?Math.round(simIdx/n*100):0;
@@ -448,13 +489,16 @@ function render(){
   else if(tab==='plan')plan();
   else sos();
   if(tab==='plan')document.querySelectorAll('#ds2 button').forEach((b,i)=>b.onclick=()=>selDay(i));
+  const fab=document.getElementById('sosFab');if(fab)fab.classList.toggle('show',tab!=='sos');
 }
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-  tab=b.dataset.t;
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+function goTab(t){
+  tab=t;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.t===t));
   render();window.scrollTo(0,0);
-});
-applyTheme();applyFontSize();
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>goTab(b.dataset.t));
+{const fab=document.getElementById('sosFab');if(fab)fab.addEventListener('click',()=>goTab('sos'));}
+applyTheme();applyFontSize();updateOffbar();
 if(!window.TRIP){
   V.innerHTML='<div class="card" style="margin-top:20px"><h2>Chyba načítania dát</h2><div class="sm mut" style="margin-bottom:12px">Obnov stránku — data.js sa stiahne raz a potom funguje offline.</div><button class="btn" onclick="location.reload()">🔄 Obnov stránku</button></div>';
 }else{render();}
