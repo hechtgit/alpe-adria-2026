@@ -75,7 +75,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=11"></script>
+<script src="data.js?v=12"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -277,7 +277,8 @@ function drawTrack(d){
 }
 function drawRoutePreview(ctx,stops,W,H,dark){
   const pts=stops.map(s=>s.c);
-  const la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
+  const bnd=pos?[...pts,pos]:pts;
+  const la=bnd.map(p=>p[0]),lo=bnd.map(p=>p[1]);
   const minLa=Math.min(...la),maxLa=Math.max(...la),minLo=Math.min(...lo),maxLo=Math.max(...lo);
   const pad=42;
   const sx=lon=>pad+(lon-minLo)/((maxLo-minLo)||1)*(W-2*pad);
@@ -295,6 +296,10 @@ function drawRoutePreview(ctx,stops,W,H,dark){
     ctx.textAlign=x>W-58?'right':(x<58?'left':'center');
     ctx.fillText(s.n,x,y<22?y+14:y-9);
   });
+  if(pos){
+    ctx.fillStyle='#185fa5';ctx.beginPath();ctx.arc(sx(pos[1]),sy(pos[0]),7,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();
+  }
 }
 
 /* ---------- PLÁN ---------- */
