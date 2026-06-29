@@ -1,5 +1,5 @@
-const C='alpeadria-v7';
-const ASSETS=['./','./index.html','./data.js','./manifest.json'];
+const C='alpeadria-v8';
+const ASSETS=['./','./index.html','./data.js?v=8','./manifest.json'];
 
 function netRace(req,ms){
   return Promise.race([
@@ -18,7 +18,7 @@ function cacheStore(req,res){
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   const u=e.request.url;
-  const netFirst=u.endsWith('data.js')||u.endsWith('index.html')||u.endsWith('/');
+  const netFirst=u.includes('data.js')||u.endsWith('index.html')||u.endsWith('/');
   const shell=()=>caches.match('./index.html');
 
   if(netFirst){

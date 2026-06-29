@@ -75,7 +75,7 @@ nav button .i{font-size:20px} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js"></script>
+<script src="data.js?v=8"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -182,11 +182,14 @@ function dnes(){
   }
   h+=`</div>`;
 
-  const dayCuts=[...T.accCutoffs,...T.reservations.map(r=>({day:r.day,what:r.what,when:r.when,status:'todo'}))].filter(c=>{
+  const dayCuts=[...T.accCutoffs,...T.reservations.map(r=>({day:r.day,what:r.what,when:r.when,status:'todo',url:r.url}))].filter(c=>{
     return c.day.replace('D','').split('-').includes(d.id.replace('D',''));
   });
   if(dayCuts.length){h+=`<div class="card"><h3>Dnešné</h3>`;
-    dayCuts.forEach(c=>h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}${esc(c.what)} <b>(${esc(c.when)})</b></div>`);h+=`</div>`;}
+    dayCuts.forEach(c=>{
+      const link=c.url?` <a href="${safeUrl(c.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;font-weight:700;white-space:nowrap">otvoriť ↗</a>`:'';
+      h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}${esc(c.what)} <b>(${esc(c.when)})</b>${link}</div>`;
+    });h+=`</div>`;}
 
   if(d.warn&&d.warn.length){h+=`<div class="card"><h3>Pozor</h3>`+d.warn.map(w=>`<div class="warnline">⚠️ ${esc(w)}</div>`).join('')+`</div>`;}
   {const a=accForDay(d.id);if(d.acc||a){
