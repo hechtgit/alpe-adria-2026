@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Codex accommodation/nature GPX" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>D9b_GoriziaCentrale_StaraGo</name>
+    <desc>D9 short connector after train: Gorizia Centrale -&gt; StaraGo Vienna Suite | Source: OSM bike routing</desc>
+  </metadata>
+  <trk>
+    <name>D9b_GoriziaCentrale_StaraGo</name>
+    <trkseg>
+      <trkpt lat="45.9330300" lon="13.6068390"/>
+      <trkpt lat="45.9330530" lon="13.6068120"/>
+      <trkpt lat="45.9330690" lon="13.6068450"/>
+      <trkpt lat="45.9330890" lon="13.6068840"/>
+      <trkpt lat="45.9331850" lon="13.6070910"/>
+      <trkpt lat="45.9331910" lon="13.6071030"/>
+      <trkpt lat="45.9331590" lon="13.6071360"/>
+      <trkpt lat="45.9331790" lon="13.6071750"/>
+      <trkpt lat="45.9332260" lon="13.6072620"/>
+      <trkpt lat="45.9332920" lon="13.6073750"/>
+      <trkpt lat="45.9333300" lon="13.6073400"/>
+      <trkpt lat="45.9333630" lon="13.6073150"/>
+      <trkpt lat="45.9333970" lon="13.6072940"/>
+      <trkpt lat="45.9334290" lon="13.6072900"/>
+      <trkpt lat="45.9334420" lon="13.6072990"/>
+      <trkpt lat="45.9342770" lon="13.6081660"/>
+      <trkpt lat="45.9343300" lon="13.6082680"/>
+      <trkpt lat="45.9343890" lon="13.6083550"/>
+      <trkpt lat="45.9344550" lon="13.6084320"/>
+      <trkpt lat="45.9344520" lon="13.6084980"/>
+      <trkpt lat="45.9344700" lon="13.6085580"/>
+      <trkpt lat="45.9345050" lon="13.6086000"/>
+      <trkpt lat="45.9345490" lon="13.6086150"/>
+      <trkpt lat="45.9345850" lon="13.6086060"/>
+      <trkpt lat="45.9346160" lon="13.6085780"/>
+      <trkpt lat="45.9346290" lon="13.6085570"/>
+      <trkpt lat="45.9346390" lon="13.6085320"/>
+      <trkpt lat="45.9346760" lon="13.6085570"/>
+      <trkpt lat="45.9347200" lon="13.6087290"/>
+      <trkpt lat="45.9347820" lon="13.6088000"/>
+      <trkpt lat="45.9358860" lon="13.6099040"/>
+      <trkpt lat="45.9359430" lon="13.6099610"/>
+      <trkpt lat="45.9359770" lon="13.6099950"/>
+      <trkpt lat="45.9366660" lon="13.6106830"/>
+      <trkpt lat="45.9367250" lon="13.6107430"/>
+      <trkpt lat="45.9367700" lon="13.6107860"/>
+      <trkpt lat="45.9368850" lon="13.6108990"/>
+      <trkpt lat="45.9374620" lon="13.6114600"/>
+      <trkpt lat="45.9375110" lon="13.6115070"/>
+      <trkpt lat="45.9375450" lon="13.6115400"/>
+      <trkpt lat="45.9382480" lon="13.6122000"/>
+      <trkpt lat="45.9385430" lon="13.6125610"/>
+      <trkpt lat="45.9385670" lon="13.6125890"/>
+      <trkpt lat="45.9386010" lon="13.6126580"/>
+      <trkpt lat="45.9391070" lon="13.6136630"/>
+      <trkpt lat="45.9391220" lon="13.6136950"/>
+      <trkpt lat="45.9391830" lon="13.6138200"/>
+      <trkpt lat="45.9396900" lon="13.6148760"/>
+      <trkpt lat="45.9397260" lon="13.6149510"/>
+      <trkpt lat="45.9397470" lon="13.6149950"/>
+      <trkpt lat="45.9397610" lon="13.6150240"/>
+      <trkpt lat="45.9402790" lon="13.6161200"/>
+      <trkpt lat="45.9403080" lon="13.6161810"/>
+      <trkpt lat="45.9403280" lon="13.6162220"/>
+      <trkpt lat="45.9411520" lon="13.6178910"/>
+      <trkpt lat="45.9411750" lon="13.6179380"/>
+      <trkpt lat="45.9412020" lon="13.6179940"/>
+      <trkpt lat="45.9412130" lon="13.6180150"/>
+      <trkpt lat="45.9412290" lon="13.6180500"/>
+      <trkpt lat="45.9412650" lon="13.6181270"/>
+      <trkpt lat="45.9412840" lon="13.6181680"/>
+      <trkpt lat="45.9413430" lon="13.6182910"/>
+      <trkpt lat="45.9414260" lon="13.6184670"/>
+      <trkpt lat="45.9417150" lon="13.6190810"/>
+      <trkpt lat="45.9417440" lon="13.6191430"/>
+      <trkpt lat="45.9417920" lon="13.6192270"/>
+      <trkpt lat="45.9420650" lon="13.6197070"/>
+      <trkpt lat="45.9421310" lon="13.6197070"/>
+      <trkpt lat="45.9425600" lon="13.6201360"/>
+      <trkpt lat="45.9425820" lon="13.6201550"/>
+      <trkpt lat="45.9425980" lon="13.6201280"/>
+      <trkpt lat="45.9426360" lon="13.6200720"/>
+      <trkpt lat="45.9429090" lon="13.6196370"/>
+      <trkpt lat="45.9429720" lon="13.6195280"/>
+      <trkpt lat="45.9434740" lon="13.6186530"/>
+      <trkpt lat="45.9435210" lon="13.6187160"/>
+      <trkpt lat="45.9442680" lon="13.6195310"/>
+      <trkpt lat="45.9441250" lon="13.6197870"/>
+      <trkpt lat="45.9440390" lon="13.6198060"/>
+      <trkpt lat="45.9440350" lon="13.6198030"/>
+    </trkseg>
+  </trk>
+</gpx>
