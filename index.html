@@ -87,7 +87,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=27"></script>
+<script src="data.js?v=28"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -401,8 +401,13 @@ function drawRoutePreview(ctx,stops,W,H,dark){
 }
 
 /* ---------- PLÁN ---------- */
+const FILM_URL='https://youtu.be/mVbUAd4mceE';
+const FILM_T={D1:0,D2:56,D3:160,D4:304,D5:432,D6:520,D7:600,D8:730,D9:768,D10:920,D11:1032,D12:1184,D13:1224};
+function filmUrl(sec){return sec?`${FILM_URL}?t=${sec}s`:FILM_URL;}
+function filmMMSS(sec){return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
 function plan(){
-  let h=`<div class="card"><h2 style="margin:0 0 6px">Rezervácie & cut-offy</h2>`;
+  let h=`<div class="card"><h2 style="margin:0 0 8px">🎬 Film — Alpe-Adria 2026</h2><a class="btn" href="${safeUrl(FILM_URL)}" target="_blank" rel="noopener">▶ Prehrať celý film · 21 min</a></div>`;
+  h+=`<div class="card"><h2 style="margin:0 0 6px">Rezervácie & cut-offy</h2>`;
   [...T.accCutoffs].sort((a,b)=>dnum(a.day)-dnum(b.day)).forEach(c=>h+=`<div class="warnline" style="${c.status==='warn'?'':'background:var(--tealbg);color:var(--teal)'}">${c.status==='warn'?'⚠️ ':'ℹ️ '}<b>${esc(c.day)}</b> ${esc(c.what)} <b>(${esc(c.when)})</b></div>`);
   [...T.reservations].sort((a,b)=>dnum(a.day)-dnum(b.day)).forEach(r=>h+=`<div class="prox"><div class="ic">${modeIcon(r.mode)}</div><div style="flex:1;min-width:0"><div class="sm">${r.mode?`<b style="color:var(--accent)">${esc(r.mode)}</b> · `:''}<b>${esc(r.what)}</b></div><div class="xs mut">${esc(r.day)} · ${esc(r.when)}</div></div><a class="d sm" href="${safeUrl(r.url)}" target="_blank" rel="noopener" style="color:var(--accent)">link ↗</a></div>`);
   h+=`</div>`;
@@ -423,6 +428,7 @@ function dayDetail(){
   if(d.tips&&d.tips.length)h+=`<h3 style="margin-top:10px">Tipy</h3><ul class="sm">`+d.tips.map(t=>`<li>${esc(t)}</li>`).join('')+`</ul>`;
   if(d.food&&d.food.length)h+=`<h3>Jedlo</h3><ul class="sm">`+d.food.map(f=>`<li>${esc(f)}</li>`).join('')+`</ul>`;
   if(d.komoot)h+=`<a class="btn sec" style="margin-top:8px" href="${safeUrl(d.komoot)}" target="_blank" rel="noopener">Komoot trasa ↗</a>`;
+  if(FILM_T[d.id]!=null)h+=`<a class="btn sec" style="margin-top:8px" href="${safeUrl(filmUrl(FILM_T[d.id]))}" target="_blank" rel="noopener">🎬 Film — ${esc(d.id)} (${filmMMSS(FILM_T[d.id])})</a>`;
   el.innerHTML=h;
 }
 function selDay(i){sel=i;pos=null;simIdx=null;render();}
