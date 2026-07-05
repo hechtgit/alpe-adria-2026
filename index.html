@@ -87,7 +87,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=29"></script>
+<script src="data.js?v=30"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -229,7 +229,7 @@ function dnes(){
   h+=`<div class="card"><div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill ${d.type==='voľno'?'g':''}">${esc(d.type)}</span></div>`;
   h+=`<div class="sm mut" style="margin-top:4px">${esc(d.date)}`+(d.km?` · ${d.km} km`+(d.up!=null?` · ↑${d.up} ↓${d.down} m`:''):'')+`</div>`;
   if(d.desc)h+=`<div class="sm" style="margin-top:8px">${esc(d.desc)}</div>`;
-  if(FILM_T[d.id]!=null)h+=`<a class="btn sec" style="margin-top:10px" href="${safeUrl(filmUrl(FILM_T[d.id]))}" target="_blank" rel="noopener">🎬 Film — ${esc(d.id)} (${filmMMSS(FILM_T[d.id])})</a>`;
+  if(FILM_T[d.id]!=null)h+=`<a class="btn" style="margin-top:10px" href="${safeUrl(filmUrl(FILM_T[d.id]))}" target="_blank" rel="noopener">▶ Film — ${esc(d.id)} (${filmMMSS(FILM_T[d.id])})</a>`;
   h+=`</div>`;
 
   h+=`<div class="card">`;
