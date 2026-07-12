@@ -57,6 +57,30 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--mut);flex:0 0 10px}
 .dot.ok{background:var(--ok)} .dot.wait{background:#ca8a04} .dot.help{background:#dc2626}
 .callbtn{margin-left:auto;background:var(--warnbg);color:var(--warn);border:0;border-radius:9px;padding:8px 14px;font-weight:700;font-size:calc(15px*var(--fs));text-decoration:none;flex:0 0 auto}
+.daytop{display:grid;grid-template-columns:58px minmax(0,1fr) 112px;gap:8px;align-items:stretch}
+.dayrail{display:grid;grid-template-rows:1fr auto;gap:8px;align-content:stretch}
+.daybadge{width:58px;min-height:64px;border-radius:13px;background:var(--tealbg);color:var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;line-height:1}
+.daybadge b{font-size:calc(22px*var(--fs));letter-spacing:.02em}.daybadge span{font-size:calc(12px*var(--fs));margin-top:5px;color:var(--mut);font-weight:700}
+.dayrail .pill{width:58px;min-height:30px;text-align:center;border-radius:13px;padding:7px 2px;display:flex;align-items:center;justify-content:center}
+.routeblock{min-width:0;display:block;height:100%}
+.routemini{min-width:0;height:100%;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.32));padding:9px 10px;display:grid;align-content:center;gap:8px}.routemini .k{font-size:calc(10px*var(--fs));color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.routemini b{display:block;font-size:calc(15px*var(--fs));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weatherchip{width:100%;min-height:102px;border:0;border-radius:12px;background:radial-gradient(circle at 78% 18%,rgba(255,210,26,.9) 0 9px,rgba(255,210,26,.22) 10px 25px,transparent 26px),linear-gradient(160deg,#41cdf4 0%,#2d9fb6 42%,#536a82 100%);color:#fff;padding:8px 7px;display:grid;grid-template-rows:42px auto auto;gap:3px;align-items:center;justify-items:center;text-align:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 8px rgba(35,77,110,.18);overflow:hidden}
+.weatherchip.wkind-sun{background:radial-gradient(circle at 72% 18%,#ffd21a 0 13px,rgba(255,210,26,.24) 14px 34px,transparent 35px),linear-gradient(160deg,#42d2ff 0%,#1f9bd0 48%,#51677d 100%)}
+.weatherchip.wkind-partly{background:radial-gradient(circle at 76% 18%,#ffd21a 0 11px,rgba(255,210,26,.24) 12px 32px,transparent 33px),linear-gradient(160deg,#64d7f4 0%,#4aa1be 45%,#596b7e 100%)}
+.weatherchip.wkind-cloud{background:linear-gradient(160deg,#6ed4f5 0%,#4fa4c8 38%,#637383 100%)}
+.weatherchip.wkind-rain{background:linear-gradient(160deg,#4ad8ff 0%,#2387c7 44%,#455f86 100%)}
+.weatherchip.wkind-storm{background:radial-gradient(circle at 78% 18%,rgba(255,210,26,.9) 0 9px,transparent 25px),linear-gradient(160deg,#6b7cff 0%,#475294 45%,#3c4656 100%)}
+.weatherchip.wkind-snow{background:linear-gradient(160deg,#b7f1ff 0%,#69bce1 46%,#56718b 100%)}
+.weatherchip.wkind-fog{background:linear-gradient(160deg,#b8c5cf 0%,#8294a3 48%,#596879 100%)}
+:root[data-theme="dark"] .routemini{background:rgba(255,255,255,.04)}
+.wi{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;line-height:1}.wi svg{display:block;width:34px;height:34px}.weatherchip .wi{width:44px;height:42px}.weatherchip .wi svg{width:44px;height:42px;filter:drop-shadow(0 2px 2px rgba(18,45,65,.18))}
+.wtemp{font-size:calc(18px*var(--fs));font-weight:800;line-height:1;white-space:nowrap}.wmeta{min-width:0;text-align:center}.wmeta b{display:block;font-size:calc(12px*var(--fs));line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wmeta small{display:block;font-size:calc(11px*var(--fs));color:var(--mut);line-height:1.2;margin-top:2px;white-space:nowrap}.weatherchip .wtemp{font-size:calc(22px*var(--fs));color:#fff;text-shadow:0 1px 1px rgba(25,43,60,.18)}.weatherchip .wmeta b{display:none}.weatherchip .wmeta small{color:rgba(255,255,255,.88)}
+.weatherchip.loading{opacity:.72}.weatherdetail{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center}.weatherdetail .bigwi{display:flex;align-items:center;justify-content:center}.weatherdetail .bigwi svg{width:54px;height:54px}
+.weatherstat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.weatherstat div{background:var(--tealbg);border-radius:10px;padding:8px;text-align:center}.weatherstat b{display:block;font-size:calc(16px*var(--fs))}
+.hourrow{display:grid;grid-template-columns:48px 34px 1fr auto;gap:8px;align-items:center;border-top:1px solid var(--line);padding:8px 0}.hourrow:first-child{border-top:0}.hourrow .wi,.hourrow .wi svg{width:28px;height:28px}
+@media(max-width:370px){.daytop{grid-template-columns:54px minmax(0,1fr) 104px;gap:7px}.daybadge,.dayrail .pill{width:54px}.weatherchip{padding-left:6px;padding-right:6px}.routemini{padding-left:8px;padding-right:8px}}
+@media(max-width:390px){.weatherstat{grid-template-columns:1fr}}
 .note{font-size:calc(11px*var(--fs));color:var(--mut);margin-top:8px}
 .clamp2{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1c1c1a;color:#fff;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .25s;z-index:99;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.3)}
@@ -87,7 +111,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
   <button data-t="sos"><span class="i">🆘</span>SOS</button>
 </nav>
 
-<script src="data.js?v=30"></script>
+<script src="data.js?v=31"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -168,6 +192,122 @@ function poiIc(t){return TYI[t]||'📍';}
 function dnum(s){return parseInt((String(s).match(/\d+/)||[0])[0])||0;}
 const MODEI={'Vlak':'🚂','Loď':'⛴️','Shuttle':'🚐','Taxi':'🚕','Auto':'🚗','Známka':'🎫'};
 function modeIcon(m){return MODEI[m]||'🎫';}
+const WEATHER_CACHE_MS=3*3600e3;
+let weatherMemo={};
+function dayIso(d){
+  const n=dnum(d.id);
+  const i=n>0?n-1:Math.max(0,T.days.findIndex(x=>x.id===d.id));
+  const dt=new Date(T.meta.start+'T00:00:00');dt.setDate(dt.getDate()+i);
+  return dt.toLocaleDateString('sv');
+}
+function routeParts(d){
+  const title=String(d.title||'');
+  const arr=title.split('→').map(x=>x.trim()).filter(Boolean);
+  if(arr.length>=2)return {start:arr[0],end:arr[arr.length-1]};
+  const dash=title.split('—').map(x=>x.trim()).filter(Boolean);
+  if(dash.length>=2)return {start:dash[0],end:dash[dash.length-1]};
+  return {start:title||d.id,end:title||d.id};
+}
+function weatherTarget(d){
+  const a=accForDay(d.id), rp=d.routePreview, parts=routeParts(d);
+  let c=d.accCoord||(a&&a.coord);
+  if(!c&&rp&&rp.length)c=rp[rp.length-1].c;
+  if(!c&&d.track&&d.track.length)c=d.track[d.track.length-1];
+  if(!c)c=dayCoord(d);
+  let label=(a&&a.miesto)?a.miesto.split('/').pop().trim():parts.end;
+  if(!label)label=parts.end||d.title;
+  return {coord:c,label};
+}
+function weatherKey(d){
+  const t=weatherTarget(d),c=t.coord||[0,0];
+  return `weather:${dayIso(d)}:${c[0].toFixed(3)}:${c[1].toFixed(3)}`;
+}
+function weatherIcon(kind){
+  const sun='<g fill="#ffd21a"><circle cx="24" cy="19" r="9"/><g stroke="#ffd21a" stroke-width="4" stroke-linecap="round"><path d="M24 3v5M24 30v5M8 19H3M45 19h-5M13 8l-4-4M35 8l4-4M13 30l-4 4M35 30l4 4"/></g></g>';
+  const cloud='<g><path fill="#44d8ff" opacity=".42" d="M17 39h22c6 0 11-4.5 11-10.5S45 18 39 18c-2 0-3.9.5-5.5 1.5C31.6 14.5 27 11 21.6 11c-7.2 0-13 5.8-13.1 13C3.6 25.2 0 29.2 0 34c0 5.5 4.5 5 17 5z"/><path fill="#fff" stroke="#dce8f3" stroke-width="2" stroke-linejoin="round" d="M17 36h22c6 0 11-4.5 11-10.5S45 15 39 15c-2 0-3.9.5-5.5 1.5C31.6 11.5 27 8 21.6 8c-7.2 0-13 5.8-13.1 13C3.6 22.2 0 26.2 0 31c0 5.5 4.5 5 17 5z"/></g>';
+  const drops='<g stroke="#45d8ff" stroke-width="3.5" stroke-linecap="round"><path d="M15 43l-4 8M26 43l-4 8M37 43l-4 8"/></g>';
+  const bolt='<path fill="#ffd21a" d="M23 38h9l-7 17 2-12h-8l6-14h8z"/>';
+  const snow='<g stroke="#8bdcff" stroke-width="2.5" stroke-linecap="round"><path d="M15 45h10M20 40v10M16 42l8 6M24 42l-8 6M33 45h10M38 40v10M34 42l8 6M42 42l-8 6"/></g>';
+  const fog='<g stroke="#b8c5cf" stroke-width="3" stroke-linecap="round"><path d="M10 42h33M6 49h37"/></g>';
+  if(kind==='sun')return `<svg viewBox="0 0 56 56" aria-hidden="true">${sun}</svg>`;
+  if(kind==='partly')return `<svg viewBox="0 0 56 56" aria-hidden="true">${sun}<g transform="translate(2 9) scale(.86)">${cloud}</g></svg>`;
+  if(kind==='rain')return `<svg viewBox="0 0 56 56" aria-hidden="true">${cloud}${drops}</svg>`;
+  if(kind==='storm')return `<svg viewBox="0 0 56 56" aria-hidden="true">${cloud}${bolt}${drops}</svg>`;
+  if(kind==='snow')return `<svg viewBox="0 0 56 56" aria-hidden="true">${cloud}${snow}</svg>`;
+  if(kind==='fog')return `<svg viewBox="0 0 56 56" aria-hidden="true">${cloud}${fog}</svg>`;
+  return `<svg viewBox="0 0 56 56" aria-hidden="true">${cloud}</svg>`;
+}
+function weatherInfo(code){
+  const map={
+    0:['sun','jasno'],1:['partly','skoro jasno'],2:['partly','polooblačno'],3:['cloud','oblačno'],
+    45:['fog','hmla'],48:['fog','námraza/hmla'],51:['rain','mrholenie'],53:['rain','mrholenie'],55:['rain','mrholenie'],
+    56:['rain','mrznúce mrholenie'],57:['rain','mrznúce mrholenie'],61:['rain','slabý dážď'],63:['rain','dážď'],65:['rain','silný dážď'],
+    66:['rain','mrznúci dážď'],67:['rain','mrznúci dážď'],71:['snow','sneženie'],73:['snow','sneženie'],75:['snow','silné sneženie'],
+    77:['snow','snehové zrná'],80:['rain','prehánky'],81:['rain','prehánky'],82:['rain','silné prehánky'],85:['snow','snehové prehánky'],86:['snow','snehové prehánky'],
+    95:['storm','búrky'],96:['storm','búrky s krúpami'],99:['storm','búrky s krúpami']
+  };
+  return map[code]||['cloud','počasie'];
+}
+function weatherUrl(t){
+  const c=t.coord;
+  if(!c||(!c[0]&&!c[1]))throw new Error('no-weather-coord');
+  return `https://api.open-meteo.com/v1/forecast?latitude=${c[0].toFixed(5)}&longitude=${c[1].toFixed(5)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m&forecast_days=16&timezone=auto`;
+}
+function weatherVal(v,suf=''){return v==null||Number.isNaN(+v)?'—':Math.round(+v)+suf;}
+async function loadWeather(d,force=false){
+  const key=weatherKey(d);
+  if(!force&&weatherMemo[key])return weatherMemo[key];
+  weatherMemo[key]=(async()=>{
+    if(!force){try{const c=JSON.parse(localStorage.getItem(key)||'null');if(c&&Date.now()-c.ts<WEATHER_CACHE_MS)return c.data;}catch(_){}}
+    const target=weatherTarget(d), iso=dayIso(d);
+    try{
+      const res=await fetch(weatherUrl(target),{cache:'no-store'});
+      if(!res.ok)throw new Error('weather '+res.status);
+      const fromSwCache=res.headers.get('X-Alpe-Weather-Cache')==='1';
+      const raw=await res.json(), dy=raw.daily||{}, hi=(dy.time||[]).indexOf(iso);
+      let out;
+      if(hi<0){
+        const times=dy.time||[];
+        out={missing:true,date:iso,target,range:times.length?`${times[0]} – ${times[times.length-1]}`:'',source:'Open-Meteo'};
+      }else{
+        const h=raw.hourly||{}, ht=h.time||[];
+        out={date:iso,target,source:'Open-Meteo',
+          daily:{code:dy.weather_code[hi],max:dy.temperature_2m_max[hi],min:dy.temperature_2m_min[hi],pop:dy.precipitation_probability_max[hi],rain:dy.precipitation_sum[hi],wind:dy.wind_speed_10m_max[hi]},
+          hourly:ht.map((time,i)=>({time,code:h.weather_code[i],temp:h.temperature_2m[i],pop:h.precipitation_probability[i],wind:h.wind_speed_10m[i]})).filter(x=>x.time&&x.time.slice(0,10)===iso)
+        };
+      }
+      if(fromSwCache)out.stale=true;
+      try{if(!fromSwCache)localStorage.setItem(key,JSON.stringify({ts:Date.now(),data:out}));}catch(_){}
+      return out;
+    }catch(e){
+      try{const c=JSON.parse(localStorage.getItem(key)||'null');if(c&&c.data)return {...c.data,stale:true};}catch(_){}
+      return {error:true,target,date:iso,msg:'Počasie sa nepodarilo načítať.'};
+    }
+  })();
+  return weatherMemo[key];
+}
+function weatherChipHtml(w){
+  if(!w)return `<span class="wi">${weatherIcon('cloud')}</span><span class="wtemp">…</span><span class="wmeta"><b>Počasie</b><small>načítavam</small></span>`;
+  if(w.error)return `<span class="wi">${weatherIcon('cloud')}</span><span class="wtemp">—</span><span class="wmeta"><b>Počasie</b><small>offline</small></span>`;
+  if(w.missing)return `<span class="wi">${weatherIcon('partly')}</span><span class="wtemp">—</span><span class="wmeta"><b>Počasie</b><small>čoskoro</small></span>`;
+  const inf=weatherInfo(w.daily.code);
+  return `<span class="wi">${weatherIcon(inf[0])}</span><span class="wtemp">${weatherVal(w.daily.max,'°')}</span><span class="wmeta"><b>${esc(inf[1])}</b><small>${weatherVal(w.daily.min,'°')} · ${weatherVal(w.daily.pop,'%')}</small></span>`;
+}
+function setWeatherKind(el,kind){
+  ['sun','partly','cloud','rain','storm','snow','fog'].forEach(x=>el.classList.remove('wkind-'+x));
+  el.classList.add('wkind-'+(kind||'cloud'));
+}
+function renderWeatherChip(d){
+  const el=document.getElementById('weatherChip');if(!el)return;
+  setWeatherKind(el,'cloud');
+  el.innerHTML=weatherChipHtml(null);
+  loadWeather(d).then(w=>{if(day().id!==d.id)return;const e=document.getElementById('weatherChip');if(e){e.classList.remove('loading');setWeatherKind(e,(!w||w.error)?'cloud':(w.missing?'partly':weatherInfo(w.daily.code)[0]));e.innerHTML=weatherChipHtml(w);}});
+}
+function openWeatherDetail(){tab='weather';render();window.scrollTo(0,0);}
+function refreshWeather(){
+  const d=day();try{localStorage.removeItem(weatherKey(d));}catch(_){}
+  weatherMemo={};weatherDetail();
+}
 function day(){return T.days[sel];}
 function nearestIdx(tr,p){let bi=0,bd=1e15;for(let i=0;i<tr.length;i++){const d=hav(tr[i],p);if(d<bd){bd=d;bi=i}}return bi;}
 function accForDay(id){
@@ -225,9 +365,22 @@ function proxList(){
 }
 function dnes(){
   const d=day();
+  const rp=routeParts(d);
   let h=`<div class="daysel" id="ds"></div>`;
-  h+=`<div class="card"><div class="row sp"><h2 style="margin:0">${d.id} · ${esc(d.title)}</h2><span class="pill ${d.type==='voľno'?'g':''}">${esc(d.type)}</span></div>`;
-  h+=`<div class="sm mut" style="margin-top:4px">${esc(d.date)}`+(d.km?` · ${d.km} km`+(d.up!=null?` · ↑${d.up} ↓${d.down} m`:''):'')+`</div>`;
+  h+=`<div class="card"><div class="daytop">
+    <div class="dayrail">
+      <div class="daybadge"><b>${esc(d.id)}</b><span>${esc(d.date)}</span></div>
+      <span class="pill ${d.type==='voľno'?'g':''}">${esc(d.type)}</span>
+    </div>
+    <div class="routeblock">
+      <div class="routemini">
+        <div><span class="k">Štart</span><b>${esc(rp.start)}</b></div>
+        <div><span class="k">Cieľ</span><b>${esc(rp.end)}</b></div>
+      </div>
+    </div>
+    <button class="weatherchip wkind-cloud loading" id="weatherChip" onclick="openWeatherDetail()" aria-label="Detail počasia"><span class="wi">${weatherIcon('cloud')}</span><span class="wtemp">…</span><span class="wmeta"><b>Počasie</b><small>načítavam</small></span></button>
+  </div>`;
+  h+=`<div class="sm mut" style="margin-top:9px">`+(d.km?`${d.km} km`+(d.up!=null?` · ↑${d.up} ↓${d.down} m`:''):'bez cyklo kilometrov')+`</div>`;
   if(d.desc)h+=`<div class="sm" style="margin-top:8px">${esc(d.desc)}</div>`;
   if(FILM_T[d.id]!=null)h+=`<a class="btn" style="margin-top:10px" href="${safeUrl(filmUrl(FILM_T[d.id]))}" target="_blank" rel="noopener">▶ Film — ${esc(d.id)} (${filmMMSS(FILM_T[d.id])})</a>`;
   h+=`</div>`;
@@ -293,6 +446,7 @@ function dnes(){
   if(d.food&&d.food.length){h+=`<div class="card"><h3>Jedlo & tipy</h3><ul class="sm">`+d.food.concat(d.tips||[]).map(f=>`<li>${esc(f)}</li>`).join('')+`</ul></div>`;}
   V.innerHTML=h;
   renderDaysel('ds');
+  renderWeatherChip(d);
 }
 function simulate(v){
   const tr=day().track;if(!tr||!tr.length)return;
@@ -401,6 +555,39 @@ function drawRoutePreview(ctx,stops,W,H,dark){
   }
 }
 
+/* ---------- POČASIE ---------- */
+function weatherDetail(){
+  const d=day(),t=weatherTarget(d);
+  const end=routeParts(d).end, place=t.label&&t.label!==end?` · ${esc(t.label)}`:'';
+  V.innerHTML=`<div class="daysel" id="ds"></div>
+  <div class="card">
+    <button class="btn sec" onclick="goTab('dnes')" style="margin-top:0">← Dnes</button>
+    <h2 style="margin:4px 0 2px">Počasie · ${esc(d.id)}</h2>
+    <div class="xs mut">${esc(end)}${place} · ${dayIso(d)}</div>
+    <div id="weatherBox" style="margin-top:12px"><div class="sm mut">Načítavam predpoveď z Open-Meteo…</div></div>
+  </div>`;
+  renderDaysel('ds');
+  renderWeatherDetail(d);
+}
+function renderWeatherDetail(d){
+  const box=document.getElementById('weatherBox');if(!box)return;
+  loadWeather(d).then(w=>{
+    if(day().id!==d.id)return;
+    if(w.error){box.innerHTML=`<div class="warnline">⚠️ ${esc(w.msg||'Počasie sa nepodarilo načítať.')}</div><button class="btn sec" onclick="refreshWeather()">Skúsiť znova</button>`;return;}
+    if(w.missing){box.innerHTML=`<div class="warnline" style="background:var(--tealbg);color:var(--teal)">ℹ️ Open-Meteo ešte nemá tento deň v 16-dňovej predpovedi. Aktuálne dostupné: ${esc(w.range||'kratší horizont')}.</div><button class="btn sec" onclick="refreshWeather()">Skontrolovať znova</button>`;return;}
+    const inf=weatherInfo(w.daily.code), stale=w.stale?`<div class="warnline" style="margin-top:10px">⚠️ Zobrazená je posledná uložená predpoveď, lebo online načítanie zlyhalo.</div>`:'';
+    const hours=(w.hourly||[]).filter(x=>{const h=+x.time.slice(11,13);return h>=6&&h<=21&&h%3===0;});
+    let html=`<div class="weatherdetail"><div class="bigwi">${weatherIcon(inf[0])}</div><div><h2 style="margin:0">${weatherVal(w.daily.max,'°')} / ${weatherVal(w.daily.min,'°')}</h2><div class="sm">${esc(inf[1])}</div><div class="xs mut">Zdroj: ${esc(w.source)} · cieľ/lokalita dňa</div></div></div>`;
+    html+=`<div class="weatherstat"><div><span class="xs mut">Dážď</span><b>${weatherVal(w.daily.pop,'%')}</b></div><div><span class="xs mut">Úhrn</span><b>${w.daily.rain==null?'—':(+w.daily.rain).toFixed(1)+' mm'}</b></div><div><span class="xs mut">Vietor</span><b>${weatherVal(w.daily.wind,' km/h')}</b></div></div>${stale}`;
+    if(hours.length){
+      html+=`<h3 style="margin-top:14px">Počas dňa</h3>`;
+      hours.forEach(x=>{const i=weatherInfo(x.code);html+=`<div class="hourrow"><b>${esc(x.time.slice(11,16))}</b><span class="wi">${weatherIcon(i[0])}</span><span class="sm">${weatherVal(x.temp,'°')} · ${esc(i[1])}</span><span class="xs mut">${weatherVal(x.pop,'%')} · ${weatherVal(x.wind,' km/h')}</span></div>`;});
+    }
+    html+=`<button class="btn sec" onclick="refreshWeather()">Aktualizovať počasie</button>`;
+    box.innerHTML=html;
+  });
+}
+
 /* ---------- PLÁN ---------- */
 const FILM_URL='https://youtu.be/mVbUAd4mceE';
 const FILM_T={D1:0,D2:56,D3:160,D4:304,D5:432,D6:520,D7:600,D8:730,D9:768,D10:920,D11:1032,D12:1184,D13:1224};
@@ -507,8 +694,10 @@ function render(){
   if(tab==='dnes')dnes();
   else if(tab==='mapa')mapa();
   else if(tab==='plan')plan();
+  else if(tab==='weather')weatherDetail();
   else sos();
   if(tab==='plan')document.querySelectorAll('#ds2 button').forEach((b,i)=>b.onclick=()=>selDay(i));
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.t===tab||(tab==='weather'&&x.dataset.t==='dnes')));
 }
 function goTab(t){
   tab=t;

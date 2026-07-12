@@ -1,5 +1,5 @@
-const C='alpeadria-v30';
-const CORE=['./','./index.html','./data.js?v=30','./manifest.json'];
+const C='alpeadria-v31';
+const CORE=['./','./index.html','./data.js?v=31','./manifest.json'];
 const ROUTES=[];
 ['D2_VillachHostel_TarvisioSchaefer','D3_TarvisioSchaefer_CasaBlissVenzone','D4_CasaBlissVenzone_UdineSunset42','D5_UdineSunset42_GradoRivaFoscolo','D7a_GradoRivaFoscolo_GradoFerry','D7b_TriesteFerry_PortorozKorotan','D9a_PortorozKorotan_TriesteCentrale','D9b_GoriziaCentrale_StaraGo','D10_StaraGoGorizia_BlueHouseCiginj','D11a_BlueHouseCiginj_Kobarid','D11b_Kolovrat_BlueHouseCiginj','D12b_JeseniceStation_Bled_okruh'].forEach(b=>{ROUTES.push('./'+b+'.gpx','./'+b+'.kml');});
 
@@ -17,11 +17,32 @@ function cacheStore(req,res){
   return caches.open(C).then(c=>c.put(req,res)).catch(()=>{});
 }
 
+function cachedWeather(req){
+  return caches.match(req).then(r=>{
+    if(!r)return new Response('',{status:504,statusText:'Offline'});
+    const h=new Headers(r.headers);
+    h.set('X-Alpe-Weather-Cache','1');
+    return r.clone().arrayBuffer().then(body=>new Response(body,{status:r.status,statusText:r.statusText,headers:h}));
+  });
+}
+
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   const u=e.request.url;
+  const weatherApi=u.includes('api.open-meteo.com/');
   const netFirst=u.includes('data.js')||u.endsWith('index.html')||u.endsWith('/');
   const shell=()=>caches.match('./index.html');
+
+  if(weatherApi){
+    e.respondWith(
+      netRace(e.request,8000).then(res=>{
+        if(!res.ok||res.status!==200)throw new Error('bad-weather-response');
+        const cp=res.clone();
+        return cacheStore(e.request,cp).then(()=>res,()=>res);
+      }).catch(()=>cachedWeather(e.request))
+    );
+    return;
+  }
 
   if(netFirst){
     e.respondWith(
