@@ -1,6 +1,6 @@
 # Alpe Adria 2026 — MVP appka
 
-Offline-first cockpit pre 4 ľudí. Tenká vrstva: appka nerenderuje mapy ani turn-by-turn — na navigáciu odovzdáva mapy.cz/Komoot. Všetky dáta sú embedded (funguje offline).
+Offline-first cockpit pre 4 ľudí. Tenká vrstva: appka nerenderuje mapy ani turn-by-turn — na navigáciu odovzdáva Komoot / Organic Maps / Mapy.com / OsmAnd. Všetky dáta sú embedded (funguje offline).
 
 ## Súbory
 - `index.html` — celá appka (CSS + JS inline), 4 taby: Dnes · Mapa · Plán · SOS.
@@ -19,7 +19,7 @@ Nahrať priečinok `app/` na statický hosting (Netlify drop, GitHub Pages, Clou
 
 ## Funkcie (MVP)
 - **Dnes**: aktuálny deň, etapa, **proximity „pred nami po trase"** (GPS alebo simulácia), cut-offy, ubytko (s tel. + skladovaním bicyklov), tipy.
-- **Mapa**: schematický GPX náhľad + poloha + „Otvor v mapy.cz/Komoot".
+- **Mapa**: schematický GPX náhľad + poloha + „Otvor v Komoot / Organic Maps / Mapy.com / OsmAnd".
 - **Plán**: rezervácie & cut-offy (vrátane platobných termínov ubytovaní), zoznam ubytovaní, itinerár 12 dní.
 - **SOS**: núdzové čísla po krajinách (AT 140 / IT 118 / SI 112, tap = volať), zdieľanie polohy SMS-kou, skupinový check-in (lokálny).
 
@@ -28,5 +28,5 @@ Po zmene Wordu/Sheets/GPX: `python3 gen_appdata.py` (skript v scratchpade / pri 
 
 ## Známe obmedzenia (na doladenie)
 - POI ako tunel/hranica/Kozjak majú **približnú polohu** (odvodené z trasy) — pred cestou spresniť reálnymi súradnicami.
-- mapy.cz odkaz vedie na bod (stred etapy/ubytko); turn-by-turn po GPX otestovať pre každý úsek.
+- Mapy.com a OsmAnd odkazy vedú na orientačný bod dňa; turn-by-turn po GPX otestovať/importovať v konkrétnej appke pre každý úsek.
 - D6/D8 (voľná) bez GPX stopy — sú to oddychové dni.
