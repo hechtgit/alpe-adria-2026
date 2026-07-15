@@ -38,7 +38,9 @@ h3{font-size:calc(14px*var(--fs));margin:0 0 6px;font-weight:600;color:var(--mut
 padding:13px;font-size:calc(15px*var(--fs));font-weight:600;margin:8px 0;text-decoration:none;cursor:pointer;-webkit-appearance:none}
 .btn.sec{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
 .btn:disabled,.btn[disabled]{opacity:.5;pointer-events:none}
-.btn2{display:flex;gap:8px;flex-wrap:wrap}.btn2 .btn{margin:8px 0;flex:1 1 145px;min-width:0}
+.btn2{display:flex;gap:8px}.btn2 .btn{margin:8px 0}
+.navapps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}.navapps .btn{margin:0;padding-left:6px;padding-right:6px;white-space:nowrap}
+.navfiles{margin-top:7px}.navfiles a{color:var(--mut);font-weight:700;text-decoration:underline}
 canvas{width:100%;height:240px;background:var(--tealbg);border-radius:12px;display:block}
 input[type=range]{width:100%;margin:6px 0}
 ul{margin:4px 0;padding-left:18px} li{margin:3px 0}
@@ -112,6 +114,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 </nav>
 
 <script src="data.js?v=35"></script>
+<script src="navlinks.js?v=35"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
@@ -169,6 +172,34 @@ function navUrl(u){try{const p=new URL(u||'');return/^(https?|om|komoot|geo):$/.
 function dayCoord(d){const tr=d.track||[];const acc=accForDay(d.id);const rp=d.routePreview;return tr.length?tr[0]:d.accCoord||(acc&&acc.coord)||(rp&&rp.length&&rp[rp.length-1].c)||[46.3,13.3];}
 function omUrl(d){const c=dayCoord(d);return`om://map?v=1&ll=${c[0]},${c[1]}&n=${encodeURIComponent(d.id+' '+d.title)}`;}
 function komootUrl(d){if(d.komoot)return d.komoot;const c=dayCoord(d);return`https://www.komoot.com/plan/@${c[0]},${c[1]},13z`;}
+function routeNav(r){return (window.ROUTE_NAV&&window.ROUTE_NAV[r.gpx])||{};}
+function fileUrl(u){return encodeURI(u||'#').replace(/"/g,'%22');}
+function navBtn(label,u){
+  const h=navUrl(u);
+  return h==='#'?`<span class="btn sec" disabled>${esc(label)}</span>`:`<a class="btn sec" href="${h}" target="_blank" rel="noopener">${esc(label)}</a>`;
+}
+function fileBtn(label,u){
+  return `<a class="btn sec" href="${fileUrl(u)}" target="_blank" rel="noopener">${esc(label)}</a>`;
+}
+function routeButtons(r,d,i,multi){
+  const n=routeNav(r);
+  const mapy=n.mapyNavigate||n.mapyPlan||mapyUrl(d);
+  const komoot=n.komoot||n.komootPlan||komootUrl(d);
+  const osmand=n.osmandImport||r.gpx;
+  const label=multi?'🚲 Úsek '+(i+1)+': ':'🚲 ';
+  const kml=r.kml||n.kml;
+  const organicButton=n.organicRoute?navBtn('Organic',n.organicRoute):fileBtn('Organic',n.organicImport||kml||r.gpx);
+  return `<div style="margin-top:10px">
+    <div class="sm" style="font-weight:600">${label}${esc(r.n)}</div>
+    <div class="btn2 navapps">
+      ${navBtn('Mapy.com',mapy)}
+      ${navBtn('Komoot',komoot)}
+      ${fileBtn('OsmAnd',osmand)}
+      ${organicButton}
+    </div>
+    <div class="xs mut navfiles">Súbory: <a href="${fileUrl(r.gpx)}" target="_blank" rel="noopener">GPX</a>${kml?` · <a href="${fileUrl(kml)}" target="_blank" rel="noopener">KML</a>`:''}</div>
+  </div>`;
+}
 
 function curIdx(){
   const today=new Date().toLocaleDateString('sv'); // YYYY-MM-DD local
@@ -469,12 +500,10 @@ function mapa(){
   let nav;
   if(d.routes&&d.routes.length){
     const multi=d.routes.length>1;
-    nav=`<div class="note">Stiahni trasu alebo otvor mapu v Komoot, Organic Maps, Mapy.com či OsmAnd — každý si ju importuje do svojej appky.</div>`;
-    d.routes.forEach((r,i)=>{
-      nav+=`<div style="margin-top:10px"><div class="sm" style="font-weight:600">${multi?'🚲 Úsek '+(i+1)+': ':'🚲 '}${esc(r.n)}</div><div class="btn2" style="margin-top:6px"><a class="btn sec" href="${encodeURI(r.gpx)}" download>Komoot${multi?' '+(i+1):''} (GPX)</a><a class="btn sec" href="${encodeURI(r.kml)}" download>Organic${multi?' '+(i+1):''} (KML)</a></div>${appMapButtons(d)}</div>`;
-    });
+    nav=`<div class="note">Mapy.com je hlavná navigácia; GPX/KML ostávajú ako offline záloha.</div>`;
+    d.routes.forEach((r,i)=>{nav+=routeButtons(r,d,i,multi);});
   } else {
-    nav=`<div class="note">${d.routePreview&&d.routePreview.length?'Prejazdový deň — schéma vyššie. ':'Bez cyklotrasy. '}Otvoriť miesto v mape:</div><div class="btn2" style="margin-top:8px"><a class="btn sec" href="${safeUrl(komootUrl(d))}" target="_blank" rel="noopener">Komoot</a><a class="btn sec" href="${navUrl(omUrl(d))}" target="_blank" rel="noopener">Organic</a></div>${appMapButtons(d)}`;
+    nav=`<div class="note">${d.routePreview&&d.routePreview.length?'Prejazdový deň — schéma vyššie. ':'Bez cyklotrasy. '}</div><div class="btn2 navapps"><a class="btn sec" href="${safeUrl(mapyUrl(d))}" target="_blank" rel="noopener">Mapy.com</a><a class="btn sec" href="${safeUrl(komootUrl(d))}" target="_blank" rel="noopener">Komoot</a>${navBtn('OsmAnd',`geo:${dayCoord(d)[0]},${dayCoord(d)[1]}`)}<a class="btn sec" href="${navUrl(omUrl(d))}" target="_blank" rel="noopener">Organic</a></div>`;
   }
   V.innerHTML=`<div class="daysel" id="ds"></div>
   <div class="card">
@@ -486,22 +515,10 @@ function mapa(){
   renderDaysel('ds');
   requestAnimationFrame(()=>drawTrack(d));
 }
-function mapCoord(d){
-  const tr=d.track||[],rp=d.routePreview||[],acc=accForDay(d.id);
-  if(tr.length)return tr[Math.floor(tr.length/2)];
-  if(rp.length)return rp[Math.floor(rp.length/2)].c;
-  return d.accCoord||(acc&&acc.coord)||[46.3,13.3];
-}
 function mapyUrl(d){
-  const c=mapCoord(d);
-  return `https://mapy.com/fnc/v1/showmap?mapset=outdoor&center=${c[1]},${c[0]}&zoom=13&marker=true`;
-}
-function osmandUrl(d){
-  const c=mapCoord(d);
-  return `https://osmand.net/map/?pin=${c[0]},${c[1]}#13/${c[0]}/${c[1]}`;
-}
-function appMapButtons(d){
-  return `<div class="btn2" style="margin-top:6px"><a class="btn sec" href="${safeUrl(mapyUrl(d))}" target="_blank" rel="noopener">Mapy.com</a><a class="btn sec" href="${safeUrl(osmandUrl(d))}" target="_blank" rel="noopener">OsmAnd</a></div>`;
+  const acc=accForDay(d.id);
+  const c=d.track&&d.track.length?d.track[0]:d.accCoord||(acc&&acc.coord)||[46.3,13.3];
+  return `https://mapy.cz/turisticka?x=${c[1]}&y=${c[0]}&z=13`;
 }
 function drawTrack(d){
   const cv=document.getElementById('cv');if(!cv)return;

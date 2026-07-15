@@ -1,7 +1,7 @@
 const C='alpeadria-v35';
-const CORE=['./','./index.html','./data.js?v=35','./manifest.json'];
+const CORE=['./','./index.html','./data.js?v=35','./navlinks.js?v=35','./manifest.json'];
 const ROUTES=[];
-['D2_VillachHostel_TarvisioSchaefer','D3_TarvisioSchaefer_CasaBlissVenzone','D4_CasaBlissVenzone_UdineSunset42','D5_UdineSunset42_GradoRivaFoscolo','D7a_GradoRivaFoscolo_GradoFerry','D7b_TriesteFerry_PortorozKorotan','D9a_PortorozKorotan_TriesteCentrale','D9b_GoriziaCentrale_StaraGo','D10_StaraGoGorizia_BlueHouseCiginj','D11a_BlueHouseCiginj_Kobarid','D11b_Kolovrat_BlueHouseCiginj','D12b_JeseniceStation_Bled_okruh'].forEach(b=>{ROUTES.push('./'+b+'.gpx','./'+b+'.kml');});
+['D2_VillachHostel_TarvisioSchaefer','D3_TarvisioSchaefer_CasaBlissVenzone','D4_CasaBlissVenzone_UdineSunset42','D5_UdineSunset42_GradoRivaFoscolo','D7a_GradoRivaFoscolo_GradoFerry','D7b_TriesteFerry_PortorozKorotan','D9a_PortorozKorotan_TriesteCentrale','D9b_GoriziaCentrale_StaraGo','D10_StaraGoGorizia_BlueHouseCiginj','D11a_BlueHouseCiginj_Kobarid','D11b_Kolovrat_BlueHouseCiginj','D12a_BlueHouseCiginj_TolminStation','D12b_JeseniceStation_Bled_okruh'].forEach(b=>{ROUTES.push('./'+b+'.gpx','./'+b+'.kml');});
 
 function netRace(req,ms){
   return Promise.race([
@@ -30,7 +30,7 @@ self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   const u=e.request.url;
   const weatherApi=u.includes('api.open-meteo.com/');
-  const netFirst=u.includes('data.js')||u.endsWith('index.html')||u.endsWith('/');
+  const netFirst=u.includes('data.js')||u.includes('navlinks.js')||u.endsWith('index.html')||u.endsWith('/');
   const shell=()=>caches.match('./index.html');
 
   if(weatherApi){
