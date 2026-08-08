@@ -191,9 +191,7 @@ function navBtn(label,u){
 function galleryBase(){
   try{
     const q=new URLSearchParams(location.search).get('gallery');
-    if(q){localStorage.setItem('alpeGalleryBase',q);return q.endsWith('/')?q:q+'/';}
-    const saved=localStorage.getItem('alpeGalleryBase');
-    if(saved)return saved.endsWith('/')?saved:saved+'/';
+    if(q)return q.endsWith('/')?q:q+'/';
   }catch(_){}
   return 'gallery/';
 }
