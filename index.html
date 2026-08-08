@@ -127,7 +127,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
-let galleryManifest=null, galleryLoad=null;
+let galleryManifest=null, galleryLoad=null, galleryScriptLoad=null;
 let showStops=false, gpsWatchId=null, _lastGpsRender=0, _lastGpsPos=null;
 function refreshApp(){
   showToast('Obnovujem…');
@@ -198,12 +198,23 @@ function galleryBase(){
   return 'gallery/';
 }
 function galleryUrl(rel){try{return new URL(rel,new URL(galleryBase(),location.href)).href;}catch(_){return '#';}}
+function loadGalleryScript(){
+  if(window.ALPE_ADRIA_GALLERY)return Promise.resolve(window.ALPE_ADRIA_GALLERY);
+  if(!galleryScriptLoad)galleryScriptLoad=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    script.src=galleryUrl('gallery_manifest.js');
+    script.onload=()=>window.ALPE_ADRIA_GALLERY?resolve(window.ALPE_ADRIA_GALLERY):reject(new Error('gallery-script-empty'));
+    script.onerror=()=>reject(new Error('gallery-script-unavailable'));
+    document.head.appendChild(script);
+  }).catch(e=>{galleryScriptLoad=null;throw e;});
+  return galleryScriptLoad;
+}
 async function getGallery(){
   if(galleryManifest)return galleryManifest;
   if(!galleryLoad)galleryLoad=fetch(galleryUrl('gallery_manifest.json'),{cache:'no-store'}).then(r=>{
     if(!r.ok)throw new Error('gallery-unavailable');
     return r.json();
-  }).then(m=>{galleryManifest=m;return m;}).catch(e=>{galleryLoad=null;throw e;});
+  }).catch(()=>loadGalleryScript()).then(m=>{galleryManifest=m;return m;}).catch(e=>{galleryLoad=null;throw e;});
   return galleryLoad;
 }
 async function renderGallery(dayId){
