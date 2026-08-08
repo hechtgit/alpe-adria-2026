@@ -723,7 +723,7 @@ function renderWeatherDetail(d){
 
 /* ---------- PLÁN ---------- */
 const FILM_URL='https://youtu.be/mVbUAd4mceE';
-const FINAL_FILM_URL='https://youtu.be/HMJs4skdJ6k';
+const FINAL_FILM_URL='https://youtu.be/HMJs4skdJ6k?t=0s';
 const FILM_T={D1:0,D2:56,D3:160,D4:304,D5:432,D6:520,D7:600,D8:730,D9:768,D10:920,D11:1032,D12:1184,D13:1224};
 function filmUrl(sec){return sec?`${FILM_URL}?t=${sec}s`:FILM_URL;}
 function filmMMSS(sec){return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
