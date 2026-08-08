@@ -87,6 +87,15 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 .clamp2{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1c1c1a;color:#fff;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .25s;z-index:99;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 .toast.show{opacity:1}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.gallery-tile{position:relative;aspect-ratio:1;border:0;border-radius:10px;overflow:hidden;background:var(--tealbg);padding:0;cursor:pointer}
+.gallery-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;text-shadow:0 2px 8px rgba(0,0,0,.8);background:linear-gradient(transparent 45%,rgba(0,0,0,.3))}
+.gallery-modal{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:100;display:grid;grid-template-rows:auto 1fr auto;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);color:#fff}
+.gallery-modal .close{justify-self:end;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer}
+.gallery-stage{min-height:0;display:flex;align-items:center;justify-content:center}
+.gallery-stage img,.gallery-stage video{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.gallery-caption{padding:10px 4px 14px;text-align:center;font-size:13px;color:rgba(255,255,255,.8)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .toast{background:#f1efe8;color:#1c1c1a}}
 :root[data-theme="dark"] .toast{background:#f1efe8;color:#1c1c1a}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -118,6 +127,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 <script>
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
+let galleryManifest=null, galleryLoad=null;
 let showStops=false, gpsWatchId=null, _lastGpsRender=0, _lastGpsPos=null;
 function refreshApp(){
   showToast('Obnovujem…');
@@ -178,6 +188,46 @@ function navBtn(label,u){
   const h=navUrl(u);
   return h==='#'?`<span class="btn sec" disabled>${esc(label)}</span>`:`<a class="btn sec" href="${h}" target="_blank" rel="noopener">${esc(label)}</a>`;
 }
+function galleryBase(){
+  try{
+    const q=new URLSearchParams(location.search).get('gallery');
+    if(q){localStorage.setItem('alpeGalleryBase',q);return q.endsWith('/')?q:q+'/';}
+    const saved=localStorage.getItem('alpeGalleryBase');
+    if(saved)return saved.endsWith('/')?saved:saved+'/';
+  }catch(_){}
+  return 'gallery/';
+}
+function galleryUrl(rel){try{return new URL(rel,new URL(galleryBase(),location.href)).href;}catch(_){return '#';}}
+async function getGallery(){
+  if(galleryManifest)return galleryManifest;
+  if(!galleryLoad)galleryLoad=fetch(galleryUrl('gallery_manifest.json'),{cache:'no-store'}).then(r=>{
+    if(!r.ok)throw new Error('gallery-unavailable');
+    return r.json();
+  }).then(m=>{galleryManifest=m;return m;}).catch(e=>{galleryLoad=null;throw e;});
+  return galleryLoad;
+}
+async function renderGallery(dayId){
+  const el=document.getElementById('dayGallery');if(!el)return;
+  try{
+    const m=await getGallery();
+    if(day().id!==dayId||!document.getElementById('dayGallery'))return;
+    const ids=(m.days&&m.days[dayId])||[];
+    const byId=new Map((m.items||[]).map(x=>[x.id,x]));
+    const items=ids.map(id=>byId.get(id)).filter(Boolean);
+    if(!items.length){el.innerHTML='<div class="sm mut">Z tohto dňa nemáme žiadne fotky ani videá.</div>';return;}
+    el.innerHTML=`<div class="row sp"><h3 style="margin:0">Galéria</h3><span class="xs mut">${items.length} médií</span></div><div class="gallery-grid">`+items.map(x=>`<button class="gallery-tile" onclick="openGalleryItem('${esc(x.id)}')" aria-label="Otvoriť ${x.type==='video'?'video':'fotku'}"><img src="${galleryUrl(x.thumb)}" alt="${esc(x.locality||dayId)}" loading="lazy">${x.type==='video'?'<span class="gallery-play">▶</span>':''}</button>`).join('')+'</div>';
+  }catch(_){
+    el.innerHTML='<h3>Galéria</h3><div class="sm mut">Súkromná galéria zatiaľ nie je pripojená.</div>';
+  }
+}
+function openGalleryItem(id){
+  const x=galleryManifest&&galleryManifest.items&&galleryManifest.items.find(i=>i.id===id);if(!x)return;
+  const modal=document.createElement('div');modal.className='gallery-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
+  const media=x.type==='video'?`<video src="${galleryUrl(x.src)}" controls autoplay playsinline></video>`:`<img src="${galleryUrl(x.src)}" alt="${esc(x.locality||x.day)}">`;
+  modal.innerHTML=`<button class="close" onclick="closeGallery(this)" aria-label="Zavrieť">×</button><div class="gallery-stage">${media}</div><div class="gallery-caption">${esc(x.day)} · ${esc(x.locality||'Alpe Adria')} · ${esc((x.capturedAt||'').replace('T',' '))}</div>`;
+  modal.onclick=e=>{if(e.target===modal)closeGallery(modal.querySelector('.close'));};document.body.appendChild(modal);
+}
+function closeGallery(btn){const m=btn&&btn.closest('.gallery-modal');if(m){const v=m.querySelector('video');if(v)v.pause();m.remove();}}
 function fileBtn(label,u){
   return `<a class="btn sec" href="${fileUrl(u)}" target="_blank" rel="noopener">${esc(label)}</a>`;
 }
@@ -475,9 +525,11 @@ function dnes(){
     h+=`</div>`;
   }}
   if(d.food&&d.food.length){h+=`<div class="card"><h3>Jedlo & tipy</h3><ul class="sm">`+d.food.concat(d.tips||[]).map(f=>`<li>${esc(f)}</li>`).join('')+`</ul></div>`;}
+  h+=`<div class="card" id="dayGallery"><h3>Galéria</h3><div class="sm mut">Načítavam…</div></div>`;
   V.innerHTML=h;
   renderDaysel('ds');
   renderWeatherChip(d);
+  renderGallery(d.id);
 }
 function simulate(v){
   const tr=day().track;if(!tr||!tr.length)return;
