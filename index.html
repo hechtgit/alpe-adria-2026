@@ -131,7 +131,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 <script src="navlinks.js?v=35"></script>
 <script>
 const T=window.TRIP, V=document.getElementById('view');
-let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
+let tab='dnes', sel=0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
 let galleryManifest=null, galleryLoad=null, galleryScriptLoad=null;
 const galleryPreloads=new Map();
 let showStops=false, gpsWatchId=null, _lastGpsRender=0, _lastGpsPos=null;
