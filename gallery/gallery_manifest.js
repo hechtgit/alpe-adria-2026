@@ -143,14 +143,14 @@ window.ALPE_ADRIA_GALLERY = {
       "src": "d2/d2-9bbc862a4f.jpg"
     },
     {
-      "id": "d2-3a39bdaef2",
-      "day": "D2",
+      "id": "d1-3a39bdaef2",
+      "day": "D1",
       "type": "photo",
-      "capturedAt": "2026-07-17T15:52:46",
-      "locality": "Villach → Tarvisio IT",
-      "confidence": "low",
-      "thumb": "d2/d2-3a39bdaef2-thumb.jpg",
-      "src": "d2/d2-3a39bdaef2.jpg"
+      "capturedAt": "2026-07-16T19:30:00",
+      "locality": "Villach, Rakúsko",
+      "confidence": "user_confirmed",
+      "thumb": "d1/d1-3a39bdaef2-thumb.jpg",
+      "src": "d1/d1-3a39bdaef2.jpg"
     },
     {
       "id": "d2-3c301fd672",
@@ -1916,7 +1916,8 @@ window.ALPE_ADRIA_GALLERY = {
   "days": {
     "D1": [
       "d1-2794dec1de",
-      "d1-36c176b2ce"
+      "d1-36c176b2ce",
+      "d1-3a39bdaef2"
     ],
     "D2": [
       "d2-bd5ff9cb02",
@@ -1931,7 +1932,6 @@ window.ALPE_ADRIA_GALLERY = {
       "d2-250108353e",
       "d2-78a2cba8d3",
       "d2-9bbc862a4f",
-      "d2-3a39bdaef2",
       "d2-3c301fd672"
     ],
     "D3": [
