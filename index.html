@@ -91,10 +91,14 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 .gallery-tile{position:relative;aspect-ratio:1;border:0;border-radius:10px;overflow:hidden;background:var(--tealbg);padding:0;cursor:pointer}
 .gallery-tile img{width:100%;height:100%;object-fit:cover;display:block}
 .gallery-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;text-shadow:0 2px 8px rgba(0,0,0,.8);background:linear-gradient(transparent 45%,rgba(0,0,0,.3))}
-.gallery-modal{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:100;display:grid;grid-template-rows:auto 1fr auto;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);color:#fff}
+.gallery-modal{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:100;display:grid;grid-template-rows:auto 1fr auto;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);color:#fff;overscroll-behavior:contain}
 .gallery-modal .close{justify-self:end;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer}
-.gallery-stage{min-height:0;display:flex;align-items:center;justify-content:center}
+.gallery-stage{position:relative;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.gallery-media-host{width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center}
 .gallery-stage img,.gallery-stage video{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.gallery-stage img{transition:opacity .14s ease}
+.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:44px;height:54px;border:0;border-radius:22px;background:rgba(0,0,0,.38);color:#fff;font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gallery-nav.prev{left:2px}.gallery-nav.next{right:2px}.gallery-nav[hidden]{display:none}
 .gallery-caption{padding:10px 4px 14px;text-align:center;font-size:13px;color:rgba(255,255,255,.8)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .toast{background:#f1efe8;color:#1c1c1a}}
 :root[data-theme="dark"] .toast{background:#f1efe8;color:#1c1c1a}
@@ -128,6 +132,7 @@ nav button .i{font-size:calc(23px*var(--fs))} nav button.on{color:var(--teal)}
 const T=window.TRIP, V=document.getElementById('view');
 let tab='dnes', sel=T?curIdx():0, pos=null, simIdx=null, gpsLoading=false, posTimestamp=null, posAccuracy=null;
 let galleryManifest=null, galleryLoad=null, galleryScriptLoad=null;
+const galleryPreloads=new Map();
 let showStops=false, gpsWatchId=null, _lastGpsRender=0, _lastGpsPos=null;
 function refreshApp(){
   showToast('Obnovujem…');
@@ -224,19 +229,56 @@ async function renderGallery(dayId){
     const byId=new Map((m.items||[]).map(x=>[x.id,x]));
     const items=ids.map(id=>byId.get(id)).filter(Boolean);
     if(!items.length){el.innerHTML='<div class="sm mut">Z tohto dňa nemáme žiadne fotky ani videá.</div>';return;}
-    el.innerHTML=`<div class="row sp"><h3 style="margin:0">Galéria</h3><span class="xs mut">${items.length} médií</span></div><div class="gallery-grid">`+items.map(x=>`<button class="gallery-tile" onclick="openGalleryItem('${esc(x.id)}')" aria-label="Otvoriť ${x.type==='video'?'video':'fotku'}"><img src="${galleryUrl(x.thumb)}" alt="${esc(x.locality||dayId)}" loading="lazy">${x.type==='video'?'<span class="gallery-play">▶</span>':''}</button>`).join('')+'</div>';
+    el.innerHTML=`<div class="row sp"><h3 style="margin:0">Galéria</h3><span class="xs mut">${items.length} médií</span></div><div class="gallery-grid">`+items.map(x=>`<button class="gallery-tile" onclick="openGalleryItem('${esc(x.id)}')" onpointerdown="preloadGalleryId('${esc(x.id)}')" aria-label="Otvoriť ${x.type==='video'?'video':'fotku'}"><img src="${galleryUrl(x.thumb)}" alt="${esc(x.locality||dayId)}" loading="lazy">${x.type==='video'?'<span class="gallery-play">▶</span>':''}</button>`).join('')+'</div>';
+    const warm=()=>items.slice(0,3).forEach(preloadGalleryPhoto);
+    if('requestIdleCallback' in window)requestIdleCallback(warm,{timeout:1200});else setTimeout(warm,250);
   }catch(_){
     el.innerHTML='<h3>Galéria</h3><div class="sm mut">Súkromná galéria zatiaľ nie je pripojená.</div>';
   }
 }
+function galleryItemsForDay(dayId){
+  if(!galleryManifest)return[];
+  const ids=(galleryManifest.days&&galleryManifest.days[dayId])||[];
+  const byId=new Map((galleryManifest.items||[]).map(x=>[x.id,x]));
+  return ids.map(id=>byId.get(id)).filter(Boolean);
+}
+function preloadGalleryPhoto(x){
+  if(!x||x.type!=='photo')return Promise.resolve(null);
+  const url=galleryUrl(x.src);if(galleryPreloads.has(url))return galleryPreloads.get(url);
+  const p=new Promise(resolve=>{const img=new Image();img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>{galleryPreloads.delete(url);resolve(null);};img.src=url;});
+  galleryPreloads.set(url,p);return p;
+}
+function preloadGalleryId(id){
+  const x=galleryManifest&&galleryManifest.items&&galleryManifest.items.find(i=>i.id===id);return preloadGalleryPhoto(x);
+}
+function showGalleryItem(modal,index){
+  const items=modal._items||[];if(!items.length)return;
+  const i=(index+items.length)%items.length,x=items[i];modal._index=i;modal.dataset.itemId=x.id;
+  const host=modal.querySelector('.gallery-media-host'),old=host.querySelector('video');if(old)old.pause();
+  if(x.type==='video'){
+    host.innerHTML=`<video src="${galleryUrl(x.src)}" poster="${galleryUrl(x.thumb)}" controls autoplay playsinline preload="metadata"></video>`;
+  }else{
+    host.innerHTML=`<img src="${galleryUrl(x.thumb)}" alt="${esc(x.locality||x.day)}">`;
+    preloadGalleryPhoto(x).then(img=>{if(img&&modal.isConnected&&modal.dataset.itemId===x.id){img.alt=x.locality||x.day||'Alpe Adria';host.replaceChildren(img);}});
+  }
+  modal.querySelector('.gallery-caption').textContent=`${i+1} / ${items.length} · ${x.day} · ${x.locality||'Alpe Adria'} · ${(x.capturedAt||'').replace('T',' ')}`;
+  modal.querySelectorAll('.gallery-nav').forEach(b=>b.hidden=items.length<2);
+  if(items.length>1){preloadGalleryPhoto(items[(i-1+items.length)%items.length]);preloadGalleryPhoto(items[(i+1)%items.length]);}
+}
+function moveGallery(modal,delta){if(modal&&modal.isConnected)showGalleryItem(modal,(modal._index||0)+delta);}
 function openGalleryItem(id){
   const x=galleryManifest&&galleryManifest.items&&galleryManifest.items.find(i=>i.id===id);if(!x)return;
+  const items=galleryItemsForDay(x.day),index=Math.max(0,items.findIndex(i=>i.id===id));
   const modal=document.createElement('div');modal.className='gallery-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
-  const media=x.type==='video'?`<video src="${galleryUrl(x.src)}" controls autoplay playsinline></video>`:`<img src="${galleryUrl(x.src)}" alt="${esc(x.locality||x.day)}">`;
-  modal.innerHTML=`<button class="close" onclick="closeGallery(this)" aria-label="Zavrieť">×</button><div class="gallery-stage">${media}</div><div class="gallery-caption">${esc(x.day)} · ${esc(x.locality||'Alpe Adria')} · ${esc((x.capturedAt||'').replace('T',' '))}</div>`;
-  modal.onclick=e=>{if(e.target===modal)closeGallery(modal.querySelector('.close'));};document.body.appendChild(modal);
+  modal.innerHTML=`<button class="close" onclick="closeGallery(this)" aria-label="Zavrieť">×</button><div class="gallery-stage"><div class="gallery-media-host"></div><button class="gallery-nav prev" onclick="moveGallery(this.closest('.gallery-modal'),-1)" aria-label="Predchádzajúca fotka">‹</button><button class="gallery-nav next" onclick="moveGallery(this.closest('.gallery-modal'),1)" aria-label="Nasledujúca fotka">›</button></div><div class="gallery-caption"></div>`;
+  modal._items=items;modal._previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';
+  const stage=modal.querySelector('.gallery-stage');let sx=0,sy=0;
+  stage.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;},{passive:true});
+  stage.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.25)moveGallery(modal,dx<0?1:-1);},{passive:true});
+  modal._keyHandler=e=>{if(e.key==='ArrowLeft')moveGallery(modal,-1);else if(e.key==='ArrowRight')moveGallery(modal,1);else if(e.key==='Escape')closeGallery(modal.querySelector('.close'));};
+  document.addEventListener('keydown',modal._keyHandler);modal.onclick=e=>{if(e.target===modal)closeGallery(modal.querySelector('.close'));};document.body.appendChild(modal);showGalleryItem(modal,index);
 }
-function closeGallery(btn){const m=btn&&btn.closest('.gallery-modal');if(m){const v=m.querySelector('video');if(v)v.pause();m.remove();}}
+function closeGallery(btn){const m=btn&&btn.closest('.gallery-modal');if(m){const v=m.querySelector('video');if(v)v.pause();if(m._keyHandler)document.removeEventListener('keydown',m._keyHandler);document.body.style.overflow=m._previousOverflow||'';m.remove();}}
 function fileBtn(label,u){
   return `<a class="btn sec" href="${fileUrl(u)}" target="_blank" rel="noopener">${esc(label)}</a>`;
 }

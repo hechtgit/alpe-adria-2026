@@ -1,4 +1,4 @@
-const C='alpeadria-v39';
+const C='alpeadria-v40';
 const CORE=['./','./index.html','./data.js?v=35','./navlinks.js?v=35','./manifest.json'];
 const ROUTES=[];
 ['D2_VillachHostel_TarvisioSchaefer','D3_TarvisioSchaefer_CasaBlissVenzone','D4_CasaBlissVenzone_UdineSunset42','D5_UdineSunset42_GradoRivaFoscolo','D7a_GradoRivaFoscolo_GradoFerry','D7b_TriesteFerry_PortorozKorotan','D9a_PortorozKorotan_TriesteCentrale','D9b_GoriziaCentrale_StaraGo','D10_StaraGoGorizia_BlueHouseCiginj','D11a_BlueHouseCiginj_Kobarid','D11b_Kolovrat_BlueHouseCiginj','D12a_BlueHouseCiginj_TolminStation','D12b_JeseniceStation_Bled_okruh'].forEach(b=>{ROUTES.push('./'+b+'.gpx','./'+b+'.kml');});
@@ -30,12 +30,24 @@ self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   const u=e.request.url;
   const weatherApi=u.includes('api.open-meteo.com/');
+  const galleryManifest=u.endsWith('/gallery_manifest.json')||u.endsWith('/gallery_manifest.js');
   const galleryMedia=u.includes('/gallery/')||u.includes('/02_web_gallery/');
   const netFirst=u.includes('data.js')||u.includes('navlinks.js')||u.endsWith('index.html')||u.endsWith('/');
   const shell=()=>caches.match('./index.html');
 
+  if(galleryManifest){
+    e.respondWith(fetch(e.request,{cache:'no-store'}).then(res=>{
+      if(res.ok&&res.status===200){const cp=res.clone();cacheStore(e.request,cp);}
+      return res;
+    }).catch(()=>caches.match(e.request).then(r=>r||new Response('',{status:408,statusText:'Galéria je offline'}))));
+    return;
+  }
+
   if(galleryMedia){
-    e.respondWith(fetch(e.request,{cache:'no-store'}).catch(()=>new Response('',{status:408,statusText:'Galéria je offline'})));
+    e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(res=>{
+      if(res.ok&&res.status===200){const cp=res.clone();cacheStore(e.request,cp);}
+      return res;
+    }).catch(()=>new Response('',{status:408,statusText:'Galéria je offline'}))));
     return;
   }
 
